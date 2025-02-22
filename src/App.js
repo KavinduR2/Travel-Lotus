@@ -19,6 +19,7 @@ import Chat from './Views/Chat';
 import AdminRegister from './Views/AdminRegister';
 
 // comment
+//comment 2
 
 
 const App = () => {
