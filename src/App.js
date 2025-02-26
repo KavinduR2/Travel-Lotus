@@ -5,9 +5,7 @@ import Login from './Views/Login';
 import LandingPage from './Views/LandingPage';
 import Register from './Views/Register';
 
-// comment
-//comment 2
-// comment 3
+// shenal task first comment
 
 const App = () => {
   return (
