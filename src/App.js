@@ -6,7 +6,7 @@ import LandingPage from './Views/LandingPage';
 import Register from './Views/Register';
 
 // shenal task first comment
-
+// kajanan task first commit
 const App = () => {
   return (
     <div style={{ backgroundColor: '#ffcb13', minHeight: '100vh' }}>
