@@ -10,7 +10,7 @@ import LandingPage from './Views/LandingPage';
 
 const App = () => {
   return (
-    <div style={{ backgroundColor: '#ffcb13', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
 
 
       <Router>
