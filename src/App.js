@@ -9,7 +9,7 @@ import Register from './Views/Register';
 // kajanan task first commit
 const App = () => {
   return (
-    <div style={{ backgroundColor: '#ffcb13', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
 
 
       <Router>
