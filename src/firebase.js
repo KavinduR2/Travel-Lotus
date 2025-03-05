@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth'; // For authentication
 import { getFirestore } from 'firebase/firestore'; // For Firestore database
 import { getStorage } from 'firebase/storage'; // For Firebase storage (if needed)
 
-// Your web app's Firebase configuration
+// our web app's Firebase configuration
 
 const firebaseConfig = {
   apiKey: "AIzaSyBd3iYE7-0FkwNDPcoUPpMHPYbotUDmU2g",
