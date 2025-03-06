@@ -1,1 +1,1 @@
-//payment page for the travel lotus startedch
+//payment page for the travel lotus started
