@@ -45,3 +45,29 @@ const Home = () => {
             </Container>
         );
     }
+
+    if (userRole === 'Landlord') {
+        return <LandOwnerHome userDetails={userDetails} />;
+    } else if (userRole === 'Guest') {
+        return <GuestHome userDetails={userDetails} />;
+    }
+
+    return (
+        <Container className="mt-5">
+            <Row className="justify-content-center">
+                <Col md={6}>
+                    <Card>
+                        <Card.Body className="text-center">
+                            <Card.Title>Welcome, {userDetails.email}!</Card.Title>
+                            <Card.Text>
+                                Role: {userRole ? userRole : 'No role assigned'}
+                            </Card.Text>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
+    );
+};
+
+export default Home;
