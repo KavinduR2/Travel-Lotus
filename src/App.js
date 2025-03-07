@@ -6,9 +6,11 @@ import { BrowserRouter as Router, Route, Routes, Form } from 'react-router-dom';
 // Shenal's Task - Add rooms , housing application , housing application management , rooms
 // Kajanan Task - MaintainceManagement , paymentManagement , paymentPage , request maintaince
 
-import Login from './Views/Login';
-import LandingPage from './Views/LandingPage';
 import Register from './Views/Register';
+import Login from './Views/Login';
+import Home from './Views/Home';
+import LandingPage from './Views/LandingPage';
+
 
 
 const App = () => {
@@ -22,6 +24,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path='/' element={<LandingPage />} />
+          <Route path="/home" element={<Home />} />
         </Routes>
       </Router>
     </div>
