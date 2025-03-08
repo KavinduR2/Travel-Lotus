@@ -49,3 +49,43 @@ const LandOwnerHome = ({ userDetails }) => {
         }
         setLoading(false);
     };
+
+    const handleViewChat = (GuestEmail) => {
+        setSelectedGuest(GuestEmail);
+
+        // No need to sort as they are fetched in ascending order
+        setChatMessages([...chats[GuestEmail]]);
+        setShowModal(true);
+    };
+
+    console.log(chatMessages);
+
+    const handleSendMessage = async () => {
+        if (!newMessage.trim() || !selectedGuest) return;
+
+        try {
+            const chatsRef = collection(db, 'chats');
+            const timestamp = new Date();
+            await addDoc(chatsRef, {
+                GuestEmail: selectedGuest,
+                landownerEmail: userDetails.email,
+                message: newMessage,
+                timestamp,
+                Sender: 'Landowner',
+            });
+
+            const newChatMessage = {
+                message: newMessage,
+                timestamp,
+                Sender: 'Landowner',
+            };
+
+            // Append the new message to chatMessages
+            setChatMessages([...chatMessages, newChatMessage]);
+            setNewMessage('');
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+    };
+
+    
