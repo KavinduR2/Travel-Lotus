@@ -158,3 +158,31 @@ const PaymentPage = () => {
                                             required
                                         />
                                     </Form.Group>
+
+                                    <Row className="justify-content-between">
+                                        <Col xs="auto">
+                                            <Button type="submit" variant="success">
+                                                Confirm Payment
+                                            </Button>
+                                        </Col>
+                                        <Col xs="auto">
+                                            <Button
+                                                type="button"
+                                                variant="danger"
+                                                onClick={() => navigate('/home')}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                </Form>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+            </Container>
+        </>
+    );
+};
+ 
+export default PaymentPage;
