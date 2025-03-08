@@ -101,24 +101,6 @@ const Register = () => {
                                         />
                                     </Form.Group>
 
-                                    {/* <div className="d-flex mb-3">
-                                        <Form.Check
-                                            type="radio"
-                                            label="Guest"
-                                            value="Guest"
-                                            checked={role === 'Guest'}
-                                            onChange={() => setRole('Guest')}
-                                            className="me-3"
-                                        />
-                                        <Form.Check
-                                            type="radio"
-                                            label="Landowner"
-                                            value="Landowner"
-                                            checked={role === 'Landowner'}
-                                            onChange={() => setRole('Landowner')}
-                                        />
-                                    </div> */}
-
                                     <Button
                                         variant="primary"
                                         type="submit"
@@ -139,8 +121,8 @@ const Register = () => {
                                         <Link
                                             to="/admin-register"
                                             style={{ color: '#0069d9', fontWeight: '600', textDecoration: 'none' }}
-                                            onMouseEnter={(e) => e.target.style.color = '#004c99'}  // Change color on hover
-                                            onMouseLeave={(e) => e.target.style.color = '#0069d9'}  // Reset color on hover leave
+                                            onMouseEnter={(e) => e.target.style.color = '#004c99'}  // Change color 
+                                            onMouseLeave={(e) => e.target.style.color = '#0069d9'}  // Reset color 
                                         >
                                             Click here
                                         </Link>.
@@ -150,8 +132,8 @@ const Register = () => {
                                     <Link
                                         to="/login"
                                         style={{ color: '#0069d9', fontWeight: '600', textDecoration: 'none' }}
-                                        onMouseEnter={(e) => e.target.style.color = '#004c99'}  // Change color on hover
-                                        onMouseLeave={(e) => e.target.style.color = '#0069d9'}  // Reset color on hover leave
+                                        onMouseEnter={(e) => e.target.style.color = '#004c99'}  // Change color 
+                                        onMouseLeave={(e) => e.target.style.color = '#0069d9'}  // Reset color 
                                     >
                                         Log in here
                                     </Link>.
