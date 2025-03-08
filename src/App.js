@@ -10,6 +10,7 @@ import Register from './Views/Register';
 import Login from './Views/Login';
 import Home from './Views/Home';
 import LandOwnerHome from './Views/LandOwnerHome';
+import AdminRegister from './Views/AdminRegister';
 import LandingPage from './Views/LandingPage';
 
 
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           {/* <Route path="/" element={<Login />} /> */}
           <Route path="/landowner-home" element={<LandOwnerHome />} />
+          <Route path="/admin-register" element={<AdminRegister />} />
         </Routes>
       </Router>
     </div>
