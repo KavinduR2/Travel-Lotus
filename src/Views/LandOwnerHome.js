@@ -88,4 +88,71 @@ const LandOwnerHome = ({ userDetails }) => {
         }
     };
 
-    
+    return (
+        <>
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div className="container-fluid">
+                    <Link className="navbar-brand" to="/home">Travel Lotus</Link>
+                    <div className="collapse navbar-collapse" id="navbarNav">
+                        <ul className="navbar-nav ms-auto">
+                            <li className="nav-item">
+                                <Link to="/PaymentManagement" className="nav-link">Payment Management</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/MaintenanceManagement" className="nav-link">Maintenance Management</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/HousingApplicationManagement" className="nav-link">H-Application Management</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/add-room" className="nav-link">Add Rooms</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/" className="nav-link">Logout</Link>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <Container className="mt-5">
+                <h2 className="text-center mb-4">Landlord Dashboard</h2>
+                <Row>
+                    <Col>
+                        <Card>
+                            <Card.Body>
+                                {/* <Card.Title className="text-center"></Card.Title> */}
+                                <div className="mt-4 text-center">
+                                    <h5>Welcome, {userDetails.email}!</h5>
+                                    <p>Your details:</p>
+                                    <ul className="list-group text-left">
+                                        <li className="list-group-item"><strong>Email:</strong> {userDetails.email}</li>
+                                        {/* <li className="list-group-item"><strong>UID:</strong> {userDetails.uid}</li> */}
+                                    </ul>
+                                </div>
+
+                                <h5 className="mt-4">Chats with Guest</h5>
+                                {loading ? (
+                                    <Spinner animation="border" />
+                                ) : (
+                                    <ListGroup>
+                                        {Object.keys(chats).map((GuestEmail) => (
+                                            <ListGroup.Item key={GuestEmail}>
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <span>{GuestEmail}</span>
+                                                    <Button
+                                                        variant="primary"
+                                                        onClick={() => handleViewChat(GuestEmail)}
+                                                    >
+                                                        View Chat
+                                                    </Button>
+                                                </div>
+                                            </ListGroup.Item>
+                                        ))}
+                                    </ListGroup>
+                                )}
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+            </Container>
