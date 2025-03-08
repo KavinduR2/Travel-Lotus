@@ -92,3 +92,69 @@ const PaymentPage = () => {
                     </div>
                 </div>
             </nav>
+            <Container className="mt-5">
+                <Row className="justify-content-center">
+                    <Col md={6}>
+                        <Card>
+                            <Card.Body>
+                                <Card.Title className="text-center mb-4">Payment Page</Card.Title>
+                                <Form onSubmit={handlePayment}>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Card Number</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="cardNumber"
+                                            value={formData.cardNumber}
+                                            onChange={handleInputChange}
+                                            placeholder="1234 5678 9012 3456"
+                                            required
+                                        />
+                                    </Form.Group>
+ 
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Cardholder Name</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="cardName"
+                                            value={formData.cardName}
+                                            onChange={handleInputChange}
+                                            placeholder="John Doe"
+                                            required
+                                        />
+                                    </Form.Group>
+ 
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Expiry Date</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="expiryDate"
+                                            value={formData.expiryDate}
+                                            onChange={handleInputChange}
+                                            placeholder="MM/YY"
+                                            required
+                                        />
+                                    </Form.Group>
+ 
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>CVV</Form.Label>
+                                        <Form.Control
+                                            type="password"
+                                            name="cvv"
+                                            value={formData.cvv}
+                                            onChange={handleInputChange}
+                                            placeholder="123"
+                                            required
+                                        />
+                                    </Form.Group>
+ 
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Billing Address</Form.Label>
+                                        <Form.Control
+                                            as="textarea"
+                                            name="billingAddress"
+                                            value={formData.billingAddress}
+                                            onChange={handleInputChange}
+                                            placeholder="123 Main St, City, Country"
+                                            required
+                                        />
+                                    </Form.Group>
