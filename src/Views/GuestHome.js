@@ -52,3 +52,84 @@ const GuestHome = () => {
  
         fetchAcceptedRooms();
     }, [user?.email]);
+
+    // Fetch maintenance requests
+    useEffect(() => {
+        const fetchAllMaintenanceRequests = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'maintenanceRequests'));
+                const records = [];
+                querySnapshot.forEach((doc) => {
+                    records.push({ id: doc.id, ...doc.data() });
+                });
+ 
+                setMaintenanceRequests(records.filter(records => records.fullName === user.email));
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching maintenance requests:', error);
+                setLoading(false);
+            }
+        };
+ 
+        fetchAllMaintenanceRequests();
+    }, []);
+ 
+    // Fetch messages
+    const fetchMessages = async () => {
+        setChatLoading(true);
+        try {
+            const q = query(
+                collection(db, 'chats'),
+                where('GuestEmail', '==', user.email)
+            );
+ 
+            const querySnapshot = await getDocs(q);
+            const chats = [];
+            querySnapshot.forEach((doc) => {
+                chats.push(doc.data());
+            });
+ 
+            // Sort messages in ascending order based on timestamp
+            const sortedChats = sortMessagesByTimestamp(chats);
+ 
+            setMessages(sortedChats);
+            setChatLoading(false);
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+            setChatLoading(false);
+        }
+    };
+ 
+    // Function to sort messages by timestamp in ascending order
+    const sortMessagesByTimestamp = (messages) => {
+        return messages.sort((a, b) => a.timestamp - b.timestamp);
+    };
+ 
+    // Send a new message
+    const sendMessage = async () => {
+        if (!newMessage.trim()) return;
+ 
+        try {
+            const newMessageData = {
+                GuestEmail: user.email,
+                landownerEmail,
+                message: newMessage.trim(),
+                timestamp: new Date(),
+                Sender: user.email,
+            };
+ 
+            await addDoc(collection(db, 'chats'), newMessageData);
+ 
+            // Append the new message to the existing messages
+            setMessages([...messages, newMessageData]);
+            setNewMessage('');
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+    };
+ 
+    console.log(messages);
+ 
+ 
+    return (
+        < >
