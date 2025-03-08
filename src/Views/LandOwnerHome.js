@@ -156,3 +156,38 @@ const LandOwnerHome = ({ userDetails }) => {
                     </Col>
                 </Row>
             </Container>
+
+            <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Chat with {selectedGuest}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="chat-container">
+                        <ListGroup>
+                            {chatMessages.map((msg, index) => (
+                                <ListGroup.Item key={index} className={msg.Sender === 'Landowner' ? 'text-end' : 'text-start'}>
+                                    <strong>{msg.Sender === 'Landowner' ? 'You' : msg.Sender}:</strong> {msg.message}
+                                </ListGroup.Item>
+                            ))}
+                        </ListGroup>
+                    </div>
+                    <Form className="mt-3">
+                        <Form.Group>
+                            <Form.Control
+                                type="text"
+                                placeholder="Type your message..."
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                            />
+                        </Form.Group>
+                        <Button className="mt-2" variant="primary" onClick={handleSendMessage}>
+                            Send
+                        </Button>
+                    </Form>
+                </Modal.Body>
+            </Modal>
+        </>
+    );
+};
+
+export default LandOwnerHome;
