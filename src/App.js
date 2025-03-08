@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Route, Routes, Form } from 'react-router-dom';
 import Register from './Views/Register';
 import Login from './Views/Login';
 import Home from './Views/Home';
+import LandOwnerHome from './Views/LandOwnerHome';
 import LandingPage from './Views/LandingPage';
 
 
@@ -25,6 +26,8 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path='/' element={<LandingPage />} />
           <Route path="/home" element={<Home />} />
+          {/* <Route path="/" element={<Login />} /> */}
+          <Route path="/landowner-home" element={<LandOwnerHome />} />
         </Routes>
       </Router>
     </div>
