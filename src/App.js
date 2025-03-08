@@ -10,6 +10,8 @@ import Register from './Views/Register';
 import Login from './Views/Login';
 import Home from './Views/Home';
 import LandOwnerHome from './Views/LandOwnerHome';
+
+//import functions to the Guestprofile
 import AdminRegister from './Views/AdminRegister';
 import LandingPage from './Views/LandingPage';
 
