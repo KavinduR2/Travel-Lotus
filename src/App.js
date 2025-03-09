@@ -43,8 +43,9 @@ const App = () => {
           {/* <Route path="/Guest-profile" element={<GuestProfile />} />  */}
           {/* <Route path="/profile" element={<GuestProfile />} /> */}
           <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/chat/:GuestEmail" element={<Chat />} />
           <Route path="/admin-register" element={<AdminRegister />} />
-          <Route path="/Contact" element={<Contact />} />
+          
         </Routes>
       </Router>
     </div>
