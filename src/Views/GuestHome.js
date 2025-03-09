@@ -133,3 +133,157 @@ const GuestHome = () => {
  
     return (
         < >
+        
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div className="container-fluid">
+                    <Link className="navbar-brand" to="/home">Travel Lotus</Link>
+                    <div className="collapse navbar-collapse" id="navbarNav">
+                        <ul className="navbar-nav ms-auto">
+                            <li className="nav-item" style={{backgroundColor:'green',borderRadius:'8px',marginRight:'10px'}}>
+                                <Link to="/contact" className="nav-link" style={{color:'white'}} >Emergency</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Button style={{ marginRight: 10 }} variant="primary" onClick={handleShow}>
+                                    Chat
+                                </Button>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/home" className="nav-link">Profile</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/rooms" className="nav-link">Rooms</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/RequestMaintenance" className="nav-link">Request Maintenance</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/" className="nav-link">Logout</Link>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div
+                style={{
+                    backgroundImage: `url('/Images/GuestHome.webp')`, // Reference image in public folder
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    //justifyContent: 'center',
+                    alignItems: 'center',
+                    // color: '#fff',
+                    // backgroundColor: '#fff'
+                }}>
+
+                <Container className="mt-5">
+                    <Offcanvas show={show} onHide={handleClose} placement="start">
+                        <Offcanvas.Header closeButton>
+                            <Offcanvas.Title>Chat with Landlord</Offcanvas.Title>
+                        </Offcanvas.Header>
+                        <Offcanvas.Body>
+                            {chatLoading ? (
+                                <Spinner animation="border" variant="primary" />
+                            ) : (
+                                <ListGroup>
+                                    {messages.map((msg, index) => (
+                                        <ListGroup.Item key={index} className={msg.Sender === user.email ? "text-start" : "text-end"}>
+                                            <strong>{msg.Sender === user.email ? "You" : "Landowner"}:</strong> {msg.message}
+                                        </ListGroup.Item>
+                                    ))}
+                                </ListGroup>
+                            )}
+
+                            <Form.Group className="mt-3">
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Type your message..."
+                                    value={newMessage}
+                                    onChange={(e) => setNewMessage(e.target.value)}
+                                />
+                                <Button className="mt-2" onClick={sendMessage} variant="primary">
+                                    Send
+                                </Button>
+                            </Form.Group>
+                        </Offcanvas.Body>
+                    </Offcanvas>
+                    <h2 className="text-center mb-4" style={{ color: 'white' }}>Guest Dashboard</h2>
+                    <Row>
+                        <Col>
+                            <Card>
+                                <Card.Body>
+                                    <div className="mt-4 text-center">
+                                        <h5>Welcome, {user ? user.email : 'Guest'}!</h5>
+                                    </div>
+
+                                    <div className="mt-4">
+                                        <h4>Your Rooms</h4>
+                                        {loading ? (
+                                            <div className="text-center">
+                                                <Spinner animation="border" variant="primary" />
+                                                <p>Loading rooms...</p>
+                                            </div>
+                                        ) : acceptedRooms.length === 0 ? (
+                                            <Alert variant="info" className="text-center">
+                                                No accepted rooms yet.
+                                            </Alert>
+                                        ) : (
+                                            <ul className="list-group">
+                                                {acceptedRooms.map((room) => (
+                                                    <li key={room.id} className="list-group-item">
+                                                        <div><strong>Room Number:</strong> {room.RoomNo}</div>
+                                                        <div><strong>Submission Date:</strong> {formatDate(room.submissionDate)}</div>
+                                                        <div><strong>Application Status:</strong> {room.application}</div>
+                                                        {room.application === 'Accepted' && (
+                                                            <Button
+                                                                onClick={() => navigate('/payment', { state: { roomId: room.id } })}
+                                                                className="mt-2"
+                                                                variant="primary"
+                                                            >
+                                                                Make Payment
+                                                            </Button>
+                                                        )}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+
+                                    <div className="mt-4">
+                                        <h4>All Maintenance Requests</h4>
+                                        {loading ? (
+                                            <div className="text-center">
+                                                <Spinner animation="border" variant="primary" />
+                                                <p>Loading Records...</p>
+                                            </div>
+                                        ) : maintenanceRequests.length === 0 ? (
+                                            <Alert variant="info" className="text-center">
+                                                No maintenance records found.
+                                            </Alert>
+                                        ) : (
+                                            <ul className="list-group">
+                                                {maintenanceRequests.map((request) => (
+                                                    <li key={request.id} className="list-group-item">
+                                                        <div><strong>Room Number:</strong> {request.roomNumber}</div>
+                                                        <div><strong>Submission Date:</strong> {formatDate(request.submissionDate)}</div>
+                                                        <div><strong>Status:</strong> {request.status || 'Pending'}</div>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
+
+            </div>
+        </>
+    );
+};
+
+export default GuestHome;
+      
