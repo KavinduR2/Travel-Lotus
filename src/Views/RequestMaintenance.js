@@ -86,4 +86,37 @@ const RequestMaintenance = () => {
         </div>
       </nav>
 
-      
+      <div
+                style={{
+                    backgroundImage: url('/Images/maintance.jpg'), // Reference image in public folder
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    //justifyContent: 'center',
+                    alignItems: 'center',
+                    color: '#fff'
+                }}>
+      <Container className="mt-5">
+        <h2 className="text-center mb-4">Request Maintenance Form</h2>
+        <Row className="justify-content-center">
+        <Col md={6}>
+            <Card>
+              <Card.Body>
+                {/* <Card.Title className="text-center mb-4">Request Maintenance Form</Card.Title> */}
+                <Form onSubmit={handleSubmit}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Room Number</Form.Label>
+                    <Form.Select
+                      name="roomNumber"
+                      value={formData.roomNumber}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Select Room</option>
+                      {rooms.map((room) => (
+  <option key={room.id} value={${room.Floor} - Room ${room.RoomNo}}>
+  {${room.Floor} - Room No : ${room.RoomNo}} {/* Adjust based on room data */}
+</option>
+))}
