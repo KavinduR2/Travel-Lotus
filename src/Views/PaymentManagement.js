@@ -88,4 +88,21 @@ const PaymentManagement = () => {
                                 <td>{payment.paymentAmount}</td>
                             </tr>
                         ))}
-                    
+                    </tbody>
+                </Table>
+                <Button variant="primary" onClick={handleDownloadReport}>
+                    Download Report
+                </Button>
+            </Container>
+            {/* Footer */}
+            <footer className="bg-light text-center py-3" style={{ marginTop: "100px" }}>
+                <Container>
+                    <p>&copy; 2025 TRAVEL LOTUS. All rights reserved.</p>
+                    <p><Link to="/contact">Contact Us</Link> | <Link to="/privacy">Privacy Policy</Link></p>
+                </Container>
+            </footer>
+        </>
+    );
+};
+
+export default PaymentManagement;
