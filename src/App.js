@@ -11,6 +11,8 @@ import Login from './Views/Login';
 import Home from './Views/Home';
 import LandOwnerHome from './Views/LandOwnerHome';
 
+import Rooms from './Views/Rooms';
+ 
 //import functions to the Guestprofile
 import PaymentPage from './Views/PaymentPage';
 import AdminRegister from './Views/AdminRegister';
@@ -30,6 +32,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path='/' element={<LandingPage />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/rooms" element={<Rooms />} />
           
           {/* <Route path="/" element={<Login />} /> */}
           <Route path="/landowner-home" element={<LandOwnerHome />} />
