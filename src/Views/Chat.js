@@ -26,3 +26,19 @@ const Chat = () => {
 
         fetchMessages();
     }, [GuestEmail]);
+    
+    return (
+        <div>
+            <h2>Chat with {GuestEmail}</h2>
+            <ul>
+                {messages.map((msg, idx) => (
+                    <li key={idx}>
+                        <strong>{msg.GuestEmail === GuestEmail ? "Guest" : "You"}:</strong> {msg.message}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default Chat;
