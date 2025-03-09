@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Route, Routes, Form } from 'react-router-dom';
 import Register from './Views/Register';
 import Login from './Views/Login';
 import Home from './Views/Home';
+import GuestHome from './Views/GuestHome';
 import LandOwnerHome from './Views/LandOwnerHome';
 
 import Rooms from './Views/Rooms';
@@ -35,6 +36,7 @@ const App = () => {
           <Route path="/rooms" element={<Rooms />} />
           
           {/* <Route path="/" element={<Login />} /> */}
+          <Route path="/Guest-home" element={<GuestHome />} />
           <Route path="/landowner-home" element={<LandOwnerHome />} />
           
           {/* <Route path="/Guest-profile" element={<GuestProfile />} />  */}
