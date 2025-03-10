@@ -29,3 +29,14 @@ const HousingApplication = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const applicationData = {
+                ...formData,
+                roomId: roomDetails.id,
+                submissionDate: new Date().toISOString() // Add the current date in ISO format
+            };
+            await addDoc(collection(db, "housingApplications"), applicationData); // Save data to Firestore
+            console.log("Form Submitted: ", applicationData);
+
