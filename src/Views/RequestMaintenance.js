@@ -116,7 +116,72 @@ const RequestMaintenance = () => {
                     >
                       <option value="">Select Room</option>
                       {rooms.map((room) => (
-  <option key={room.id} value={${room.Floor} - Room ${room.RoomNo}}>
-  {${room.Floor} - Room No : ${room.RoomNo}} {/* Adjust based on room data */}
-</option>
-))}
+                        <option key={room.id} value={${room.Floor} - Room ${room.RoomNo}}>
+                          {${room.Floor} - Room No : ${room.RoomNo}} {/* Adjust based on room data */}
+                        </option>
+                      ))}                      
+                    </Form.Select>
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>Full Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="fullName"
+                      value={user.email}
+                      onChange={handleChange}
+                      placeholder="Enter Full Name"
+                      required
+                    />
+                    </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>Mobile</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="mobile"
+                      value={formData.mobile}
+                      onChange={handleChange}
+                      placeholder="Enter Mobile Number"
+                      required
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>Reason</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      name="reason"
+                      value={formData.reason}
+                      onChange={handleChange}
+                      placeholder="Enter Reason for Maintenance"
+                      rows="4"
+                      required
+                    />
+                  </Form.Group>
+
+                  <Button type="submit" variant="primary" className="w-100">
+                    Submit
+                  </Button>
+                </Form>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      </div>
+    </>
+  );
+};
+
+export default RequestMaintenance;
+
+
+
+
+ 
+
+                  
+
+
+
