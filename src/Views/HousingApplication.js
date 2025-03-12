@@ -40,3 +40,26 @@ const HousingApplication = () => {
             await addDoc(collection(db, "housingApplications"), applicationData); // Save data to Firestore
             console.log("Form Submitted: ", applicationData);
 
+            const roomDocRef = doc(db, "Rooms", roomDetails.id); // Reference to the specific room document
+            const roomDoc = await getDoc(roomDocRef); // Fetch the latest room document
+
+            if (roomDoc.exists()) {
+                const roomData = roomDoc.data();
+                const updatedNumberOfBed = roomData.NumberOfBed - 1; // Decrement the bed count
+
+                if (updatedNumberOfBed >= 0) {
+                    await updateDoc(roomDocRef, { NumberOfBed: updatedNumberOfBed }); // Update the document in Firestore
+                    alert("Application Submitted and Room Updated Successfully!");
+                    navigate('/home'); // Navigate to the home page
+                } else {
+                    alert("No beds available in the selected room!");
+                }
+            } else {
+                alert("Room does not exist in the database!");
+            }
+        } catch (error) {
+            console.error("Error processing application: ", error);
+            alert("Failed to submit application. Please try again.");
+        }
+    };
+
