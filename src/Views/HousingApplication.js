@@ -63,3 +63,27 @@ const HousingApplication = () => {
         }
     };
 
+    return (
+        <>
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div className="container-fluid">
+                    <Link className="navbar-brand" to="/home">CRIBCLIQUE</Link>
+                    <div className="collapse navbar-collapse" id="navbarNav">
+                        <ul className="navbar-nav ms-auto">
+                            <li className="nav-item">
+                                <Link to="/home" className="nav-link">Profile</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/rooms" className="nav-link">Rooms</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/RequestMaintenance" className="nav-link">Request Maintenance</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/" className="nav-link">Logout</Link>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
