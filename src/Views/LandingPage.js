@@ -21,7 +21,7 @@ const LandingPage = () => {
       booking: 'Easy Booking',
       bookingDesc: 'Apply online and get instant confirmation.',
     },
-    transportation: 'Need Transportation?',
+    transportation: 'Need more help with Transportation?',
     chatbot: 'Chat with Lotus Assistant',
     login: 'Login / Register',
     footer: {
