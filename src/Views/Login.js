@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase'; // Import auth from your firebase.js file
+import { sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import { FcGoogle } from 'react-icons/fc';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
+        setSuccess('');
+
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
@@ -28,17 +32,56 @@ const Login = () => {
                 role: userData.role || 'user',
             }));
 
-            navigate('/home');
+            setSuccess('Login successful! Redirecting...');
+            setTimeout(() => navigate('/home'), 2000); // Redirect after 2 seconds
         } catch (error) {
             console.error('Error logging in:', error);
             setError('Invalid email or password.');
         }
     };
 
+    const handleGoogleLogin = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            const userData = userDoc.exists() ? userDoc.data() : {};
+
+            sessionStorage.setItem('user', JSON.stringify({
+                uid: user.uid,
+                email: user.email,
+                role: userData.role || 'user',
+            }));
+
+            setSuccess('Google login successful! Redirecting...');
+            setTimeout(() => navigate('/home'), 2000); // Redirect after 2 seconds
+        } catch (error) {
+            console.error('Error logging in with Google:', error);
+            setError('Failed to login with Google.');
+        }
+    };
+
+    const handleForgotPassword = async () => {
+        if (!email) {
+            setError('Please enter your email address.');
+            return;
+        }
+
+        try {
+            await sendPasswordResetEmail(auth, email);
+            setSuccess('Password reset email sent. Check your inbox.');
+        } catch (error) {
+            console.error('Error sending password reset email:', error);
+            setError('Failed to send password reset email.');
+        }
+    };
+
     return (
         <div
             style={{
-                backgroundImage: `url('/Images/Login_Image.webp')`, // Reference image in public folder
+                backgroundImage: `url('/Images/Login_Image.webp')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 minHeight: '100vh',
@@ -46,10 +89,9 @@ const Login = () => {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                color: '#fff', // White text on the dark background
+                color: '#fff',
             }}
         >
-
             <nav className="navbar navbar-expand-lg navbar-dark bg-transparent">
                 <div className="container-fluid">
                     <Link className="navbar-brand fs-1 fw-bold" style={{ color: 'black' }} to="/">Travel Lotus</Link>
@@ -89,21 +131,41 @@ const Login = () => {
                                     <Button
                                         variant="primary"
                                         type="submit"
-                                        className="w-100 p-3 rounded-3 border-0 shadow-sm"
+                                        className="w-100 p-3 rounded-3 border-0 shadow-sm mb-3"
                                         style={{ backgroundColor: '#0069d9', fontWeight: '600' }}
                                     >
                                         Login
                                     </Button>
 
+                                    <Button
+                                        variant="outline-dark"
+                                        className="w-100 p-3 rounded-3 border-1 shadow-sm mb-3 d-flex align-items-center justify-content-center"
+                                        onClick={handleGoogleLogin}
+                                    >
+                                        <FcGoogle size={20} className="me-2" />
+                                        Login with Google
+                                    </Button>
+
                                     {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+                                    {success && <Alert variant="success" className="mt-3">{success}</Alert>}
+
+                                    <div className="text-center mt-3">
+                                        <Button
+                                            variant="link"
+                                            onClick={handleForgotPassword}
+                                            style={{ color: '#0069d9', fontWeight: '600', textDecoration: 'none' }}
+                                        >
+                                            Forgot Password?
+                                        </Button>
+                                    </div>
 
                                     <div className="text-center mt-4">
                                         <span className="text-dark">Don't have an account?  </span>
                                         <Link
                                             to="/register"
                                             style={{ color: '#0069d9', fontWeight: '600', textDecoration: 'none' }}
-                                            onMouseEnter={(e) => e.target.style.color = '#004c99'}  // Change color on hover
-                                            onMouseLeave={(e) => e.target.style.color = '#0069d9'}  // Reset color on hover leave
+                                            onMouseEnter={(e) => e.target.style.color = '#004c99'}
+                                            onMouseLeave={(e) => e.target.style.color = '#0069d9'}
                                         >
                                             Register here
                                         </Link>.
