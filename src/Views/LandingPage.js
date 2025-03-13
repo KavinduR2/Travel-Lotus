@@ -130,23 +130,41 @@ const LandingPage = () => {
             <Col md={7} className="mb-4 mb-md-0">
               <TransportationLinks title={content.transportation} />
             </Col>
-            <Col md={4} className="d-flex align-items-center justify-content-center">
-              <Card className="h-100 border-0 shadow-sm">
-                <Card.Body className="d-flex flex-column justify-content-between">
-                  <div className="text-center mb-3">
-                    <FaRobot size={30} className="text-primary mb-2" />
-                    <h5>{content.chatbot}</h5>
-                  </div>
-                  <Button
-                    variant="primary"
-                    onClick={() => setShowChatbot(true)}
-                    className="w-100"
-                  >
-                    <FaRobot className="me-2" /> {content.chatbot}
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
+            <Col md={4} className="mb-4">
+                <Card className="text-center h-100 shadow-sm">
+                    <Card.Body>
+                    <FaRobot size={50} className="mb-3 text-primary" />
+                    <Card.Title>{content.chatbot}</Card.Title>
+                    <Button
+                        variant="primary"
+                        onClick={() => setShowChatbot(true)}
+                        className="w-100"
+                        style={{
+                        background: 'linear-gradient(45deg, #6a11cb, #2575fc)',
+                        border: 'none',
+                        color: 'white',
+                        padding: '10px 20px',
+                        borderRadius: '25px',
+                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)',
+                        cursor: 'pointer',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        transition: 'transform 0.2s, box-shadow 0.2s',
+                        }}
+                        onMouseOver={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                        e.currentTarget.style.boxShadow = '0 6px 8px rgba(0, 0, 0, 0.3)';
+                        }}
+                        onMouseOut={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.2)';
+                        }}
+                    >
+                        <FaRobot className="me-2" /> {content.chatbot}
+                    </Button>
+                    </Card.Body>
+                </Card>
+                </Col>
           </Row>
         </Container>
       </div>
