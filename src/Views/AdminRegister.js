@@ -94,7 +94,7 @@ const AdminRegister = () => {
     return (
         <div
             style={{
-                backgroundImage: `url('/Images/BGImage.png')`,
+                backgroundImage: `url('/Images/Login_Image.webp')`, // Updated to match login page
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 minHeight: '100vh',
@@ -107,11 +107,46 @@ const AdminRegister = () => {
         >
             <nav className="navbar navbar-expand-lg navbar-dark bg-transparent w-100 position-absolute top-0 start-0 p-4">
                 <div className="container">
-                    <Link className="navbar-brand fs-1 fw-bold" style={{ 
-                        color: 'black', 
-                        textShadow: '2px 2px 4px rgba(255, 255, 255, 0.5)' 
-                    }} to="/">
-                        Travel Lotus
+                    <Link className="navbar-brand" to="/">
+                        <div className="d-flex align-items-center">
+                            <h1 className="fs-1 fw-bold mb-0" style={{ 
+                                color: 'black', 
+                                textShadow: '2px 2px 4px rgba(255, 255, 255, 0.7)',
+                                letterSpacing: '1px',
+                                position: 'relative',
+                                display: 'inline-block',
+                                padding: '0.5rem 1rem',
+                                borderRadius: '0.5rem',
+                                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                border: '2px solid rgba(0, 105, 217, 0.5)',
+                                transform: 'translateY(0)',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.transform = 'translateY(-5px)';
+                                e.target.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.15)';
+                                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.transform = 'translateY(0)';
+                                e.target.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+                                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+                            }}>
+                                Travel Lotus
+                                <span style={{ 
+                                    fontSize: '0.4em', 
+                                    display: 'block', 
+                                    color: '#0069d9',
+                                    fontWeight: 'normal',
+                                    letterSpacing: 'normal',
+                                    textShadow: 'none',
+                                    marginTop: '-5px'
+                                }}>
+                                    Your Journey, Your Way
+                                </span>
+                            </h1>
+                        </div>
                     </Link>
                 </div>
             </nav>
