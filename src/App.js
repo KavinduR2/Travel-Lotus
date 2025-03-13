@@ -14,7 +14,8 @@ import LandOwnerHome from './Views/LandOwnerHome';
 
 import PaymentManagement from './Views/PaymentManagement';
 import Rooms from './Views/Rooms';
- 
+import RequestMaintenance from './Views/RequestMaintenance' 
+
 //import functions to the Guestprofile
 import PaymentPage from './Views/PaymentPage';
 import AdminRegister from './Views/AdminRegister';
@@ -42,6 +43,7 @@ const App = () => {
           <Route path="/landowner-home" element={<LandOwnerHome />} />
           
           <Route path="/PaymentManagement" element={<PaymentManagement />} />
+          <Route path="/RequestMaintenance" element={<RequestMaintenance />} />
 
           {/* <Route path="/Guest-profile" element={<GuestProfile />} />  */}
           {/* <Route path="/profile" element={<GuestProfile />} /> */}
