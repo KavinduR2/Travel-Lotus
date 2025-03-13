@@ -12,6 +12,7 @@ import Home from './Views/Home';
 import GuestHome from './Views/GuestHome';
 import LandOwnerHome from './Views/LandOwnerHome';
 
+import PaymentManagement from './Views/PaymentManagement';
 import Rooms from './Views/Rooms';
  
 //import functions to the Guestprofile
@@ -40,6 +41,8 @@ const App = () => {
           <Route path="/Guest-home" element={<GuestHome />} />
           <Route path="/landowner-home" element={<LandOwnerHome />} />
           
+          <Route path="/PaymentManagement" element={<PaymentManagement />} />
+
           {/* <Route path="/Guest-profile" element={<GuestProfile />} />  */}
           {/* <Route path="/profile" element={<GuestProfile />} /> */}
           <Route path="/payment" element={<PaymentPage />} />
