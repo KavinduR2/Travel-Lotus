@@ -1,48 +1,78 @@
 import React, { useState } from 'react';
 import { auth, db } from '../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Alert, InputGroup } from 'react-bootstrap';
+import { FcGoogle } from 'react-icons/fc';
 
 const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [role, setRole] = useState('Guest');
+    const [showPassword, setShowPassword] = useState(false); // Show password toggle
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
         setError('');
+        setSuccess('');
 
+        // Check if passwords match
         if (password !== confirmPassword) {
             setError('Passwords do not match!');
             return;
         }
 
         try {
+            // Create user with email and password
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
+            // Store user data in Firestore with default role 'Guest'
             await setDoc(doc(db, 'Users', user.uid), {
                 email: user.email,
-                role: role,
+                role: 'Guest', // Default role for email/password registration
                 createdAt: new Date(),
             });
 
-            alert(`Registration successful as ${role}`);
-            navigate('/login');
+            // Show success message and redirect to login
+            setSuccess('Registration successful! Redirecting to login...');
+            setTimeout(() => navigate('/login'), 2000); // Redirect after 2 seconds
         } catch (err) {
+            console.error('Error during registration:', err);
             setError(err.message);
+        }
+    };
+
+    const handleGoogleRegister = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            // Store user data in Firestore with default role 'Guest'
+            await setDoc(doc(db, 'Users', user.uid), {
+                email: user.email,
+                role: 'Guest', // Default role for Google Sign-In
+                createdAt: new Date(),
+            });
+
+            // Show success message and redirect to login
+            setSuccess('Google registration successful! Redirecting to login...');
+            setTimeout(() => navigate('/login'), 2000); // Redirect after 2 seconds
+        } catch (err) {
+            console.error('Error during Google registration:', err);
+            setError('Failed to register with Google.');
         }
     };
 
     return (
         <div
             style={{
-                backgroundImage: `url('/Images/BGImage.png')`, // Reference image in public folder
+                backgroundImage: `url('/Images/BGImage.png')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 minHeight: '100vh',
@@ -50,7 +80,7 @@ const Register = () => {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                color: '#fff', // White text on the dark background
+                color: '#fff',
             }}
         >
             <nav className="navbar navbar-expand-lg navbar-dark bg-transparent">
@@ -79,69 +109,91 @@ const Register = () => {
 
                                     <Form.Group className="mb-3">
                                         <Form.Label>Password</Form.Label>
-                                        <Form.Control
-                                            type="password"
-                                            placeholder="Enter your password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            required
-                                            className="p-3 border-0 rounded-3"
-                                        />
+                                        <InputGroup>
+                                            <Form.Control
+                                                type={showPassword ? 'text' : 'password'}
+                                                placeholder="Enter your password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                required
+                                                className="p-3 border-0 rounded-3"
+                                            />
+                                            <Button
+                                                variant="outline-secondary"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="border-0"
+                                            >
+                                                {showPassword ? '🙈' : '👀'}
+                                            </Button>
+                                        </InputGroup>
                                     </Form.Group>
 
                                     <Form.Group className="mb-3">
                                         <Form.Label>Confirm Password</Form.Label>
-                                        <Form.Control
-                                            type="password"
-                                            placeholder="Confirm your password"
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            required
-                                            className="p-3 border-0 rounded-3"
-                                        />
+                                        <InputGroup>
+                                            <Form.Control
+                                                type={showPassword ? 'text' : 'password'}
+                                                placeholder="Confirm your password"
+                                                value={confirmPassword}
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                                required
+                                                className="p-3 border-0 rounded-3"
+                                            />
+                                            <Button
+                                                variant="outline-secondary"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="border-0"
+                                            >
+                                                {showPassword ? '🙈' : '👀'}
+                                            </Button>
+                                        </InputGroup>
                                     </Form.Group>
 
                                     <Button
                                         variant="primary"
                                         type="submit"
-                                        className="w-100 p-3 rounded-3 border-0 shadow-sm"
+                                        className="w-100 p-3 rounded-3 border-0 shadow-sm mb-3"
                                         style={{ backgroundColor: '#0069d9', fontWeight: '600' }}
                                     >
                                         Register
                                     </Button>
-                                </Form>
 
-                                {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+                                    <Button
+                                        variant="outline-dark"
+                                        className="w-100 p-3 rounded-3 border-1 shadow-sm mb-3 d-flex align-items-center justify-content-center"
+                                        onClick={handleGoogleRegister}
+                                    >
+                                        <FcGoogle size={20} className="me-2" />
+                                        Register with Google
+                                    </Button>
 
-                                <div className="text-center mt-4">
+                                    {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+                                    {success && <Alert variant="success" className="mt-3">{success}</Alert>}
 
-                                    <div>
+                                    <div className="text-center mt-4">
+                                        <span className="text-dark">Already have an account?  </span>
+                                        <Link
+                                            to="/login"
+                                            style={{ color: '#0069d9', fontWeight: '600', textDecoration: 'none' }}
+                                            onMouseEnter={(e) => e.target.style.color = '#004c99'}
+                                            onMouseLeave={(e) => e.target.style.color = '#0069d9'}
+                                        >
+                                            Log in here
+                                        </Link>.
+                                    </div>
 
-                                        <span className="text-dark">If you want to Admin account?  </span>
+                                    <div className="text-center mt-3">
+                                        <span className="text-dark">Want to register as an admin or landlord?  </span>
                                         <Link
                                             to="/admin-register"
                                             style={{ color: '#0069d9', fontWeight: '600', textDecoration: 'none' }}
-                                            onMouseEnter={(e) => e.target.style.color = '#004c99'}  // Change color 
-                                            onMouseLeave={(e) => e.target.style.color = '#0069d9'}  // Reset color 
+                                            onMouseEnter={(e) => e.target.style.color = '#004c99'}
+                                            onMouseLeave={(e) => e.target.style.color = '#0069d9'}
                                         >
-                                            Click here
+                                            Register here
                                         </Link>.
-
                                     </div>
-                                    <span className="text-dark">Already have an account?  </span>
-                                    <Link
-                                        to="/login"
-                                        style={{ color: '#0069d9', fontWeight: '600', textDecoration: 'none' }}
-                                        onMouseEnter={(e) => e.target.style.color = '#004c99'}  // Change color 
-                                        onMouseLeave={(e) => e.target.style.color = '#0069d9'}  // Reset color 
-                                    >
-                                        Log in here
-                                    </Link>.
-
-
-
-                                </div>
-
+                                </Form>
                             </Card.Body>
                         </Card>
                     </Col>

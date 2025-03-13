@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { auth } from '../firebase'; // Import auth from your firebase.js file
-import { sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import { Link, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { useNavigate, Link } from 'react-router-dom'; // Add Link import
+import { Container, Row, Col, Card, Form, Button, Alert, InputGroup } from 'react-bootstrap';
 import { FcGoogle } from 'react-icons/fc';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false); // Show password toggle
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
@@ -23,17 +22,13 @@ const Login = () => {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
-            const userData = userDoc.exists() ? userDoc.data() : {};
-
-            sessionStorage.setItem('user', JSON.stringify({
-                uid: user.uid,
-                email: user.email,
-                role: userData.role || 'user',
-            }));
-
-            setSuccess('Login successful! Redirecting...');
-            setTimeout(() => navigate('/home'), 2000); // Redirect after 2 seconds
+            // Redirect based on role
+            const userRole = user.role || 'Guest'; // Default to Guest if role is not set
+            if (userRole === 'Landlord') {
+                navigate('/landowner-home');
+            } else {
+                navigate('/Guest-home');
+            }
         } catch (error) {
             console.error('Error logging in:', error);
             setError('Invalid email or password.');
@@ -46,35 +41,16 @@ const Login = () => {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
 
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
-            const userData = userDoc.exists() ? userDoc.data() : {};
-
-            sessionStorage.setItem('user', JSON.stringify({
-                uid: user.uid,
-                email: user.email,
-                role: userData.role || 'user',
-            }));
-
-            setSuccess('Google login successful! Redirecting...');
-            setTimeout(() => navigate('/home'), 2000); // Redirect after 2 seconds
+            // Redirect based on role
+            const userRole = user.role || 'Guest'; // Default to Guest if role is not set
+            if (userRole === 'Landlord') {
+                navigate('/landowner-home');
+            } else {
+                navigate('/Guest-home');
+            }
         } catch (error) {
             console.error('Error logging in with Google:', error);
             setError('Failed to login with Google.');
-        }
-    };
-
-    const handleForgotPassword = async () => {
-        if (!email) {
-            setError('Please enter your email address.');
-            return;
-        }
-
-        try {
-            await sendPasswordResetEmail(auth, email);
-            setSuccess('Password reset email sent. Check your inbox.');
-        } catch (error) {
-            console.error('Error sending password reset email:', error);
-            setError('Failed to send password reset email.');
         }
     };
 
@@ -118,14 +94,23 @@ const Login = () => {
 
                                     <Form.Group className="mb-3">
                                         <Form.Label>Password</Form.Label>
-                                        <Form.Control
-                                            type="password"
-                                            placeholder="Enter your password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            required
-                                            className="p-3 border-0 rounded-3"
-                                        />
+                                        <InputGroup>
+                                            <Form.Control
+                                                type={showPassword ? 'text' : 'password'}
+                                                placeholder="Enter your password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                required
+                                                className="p-3 border-0 rounded-3"
+                                            />
+                                            <Button
+                                                variant="outline-secondary"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="border-0"
+                                            >
+                                                {showPassword ? '🙈' : '👀'}
+                                            </Button>
+                                        </InputGroup>
                                     </Form.Group>
 
                                     <Button
@@ -148,16 +133,6 @@ const Login = () => {
 
                                     {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
                                     {success && <Alert variant="success" className="mt-3">{success}</Alert>}
-
-                                    <div className="text-center mt-3">
-                                        <Button
-                                            variant="link"
-                                            onClick={handleForgotPassword}
-                                            style={{ color: '#0069d9', fontWeight: '600', textDecoration: 'none' }}
-                                        >
-                                            Forgot Password?
-                                        </Button>
-                                    </div>
 
                                     <div className="text-center mt-4">
                                         <span className="text-dark">Don't have an account?  </span>
