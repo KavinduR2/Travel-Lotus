@@ -21,7 +21,7 @@ const LandingPage = () => {
       booking: 'Easy Booking',
       bookingDesc: 'Apply online and get instant confirmation.',
     },
-    transportation: 'Need Transportation?',
+    transportation: 'Need more help with Transportation?',
     chatbot: 'Chat with Lotus Assistant',
     login: 'Login / Register',
     footer: {
@@ -42,9 +42,15 @@ const LandingPage = () => {
       {/* Navigation Bar */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container-fluid">
-          <Link className="navbar-brand fs-2 fw-bold" to="/">
+            <Link className="navbar-brand fs-2 fw-bold d-flex align-items-center" to="/">
+            <img 
+                src="/images/logo.png" 
+                alt="Travel Lotus Logo" 
+                height="80" 
+                className="me-2" 
+            />
             {content.brandName}
-          </Link>
+            </Link>
           <button
             className="navbar-toggler"
             type="button"
