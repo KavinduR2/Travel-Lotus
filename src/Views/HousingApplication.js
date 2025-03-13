@@ -86,4 +86,110 @@ const HousingApplication = () => {
                     </div>
                 </div>
             </nav>
+            <Container className="mt-5">
+                <div className="content">
+                    <h2 className="text-center mb-4">Housing Application</h2>
+                    <Card className="mb-5 p-4">
+                        <Card.Body>
+                            <h3>Selected Room Details</h3>
+                            {roomDetails && (
+                                <div className="room-info mb-5">
+                                    <strong>Room No:</strong> {roomDetails.RoomNo}<br />
+                                    <strong>Floor:</strong> {roomDetails.Floor}<br />
+                                    <strong>No of Beds:</strong> {roomDetails.NumberOfBed}<br />
+                                    <strong>Description:</strong> {roomDetails.description}<br />
+                                </div>
+                            )}
+                            {/* Booking Form */}
+                            <h4>Booking Details</h4>
+                            <Form onSubmit={handleSubmit}>
+                                <Row className="mb-2">
+                                    <Col md={6}>
+                                        <Form.Group>
+                                            <Form.Control
+                                                type="text"
+                                                name="firstName"
+                                                value={formData.firstName}
+                                                onChange={handleChange}
+                                                placeholder="First Name"
+                                                required
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col md={6}>
+                                        <Form.Group>
+                                            <Form.Control
+                                                type="text"
+                                                name="lastName"
+                                                value={formData.lastName}
+                                                onChange={handleChange}
+                                                placeholder="Last Name"
+                                                required
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+
+                                <Row className="mb-3">
+                                    <Col md={6}>
+                                        <Form.Group>
+                                            <Form.Control
+                                                type="text"
+                                                name="currentAddress"
+                                                value={formData.currentAddress}
+                                                onChange={handleChange}
+                                                placeholder="Current Address"
+                                                required
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col md={6}>
+                                        <Form.Group>
+                                            <Form.Control
+                                                type="text"
+                                                name="mobileNumber"
+                                                value={formData.mobileNumber}
+                                                onChange={handleChange}
+                                                placeholder="Mobile Number"
+                                                required
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+
+                                <Form.Group className="mb-4">
+                                    <Form.Label>Select Status:</Form.Label>
+                                    <div className="radio-group">
+                                        <Form.Check
+                                            type="radio"
+                                            label="Travel"
+                                            name="status"
+                                            value="Travel"
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                        
+                                        <Form.Check
+                                            type="radio"
+                                            label="Other"
+                                            name="status"
+                                            value="Other"
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                </Form.Group>
+
+                                <Button type="submit" className="submit-button" variant="primary">
+                                    Submit
+                                </Button>
+                            </Form>
+                        </Card.Body>
+                    </Card>
+                </div>
+            </Container>
+        </>
+    );
+};
+
+export default HousingApplication;
 
