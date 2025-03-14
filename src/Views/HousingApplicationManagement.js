@@ -36,5 +36,3 @@ const HousingApplicationManagement = () => {
     
         fetchApplications();
       }, []);
-
-      
