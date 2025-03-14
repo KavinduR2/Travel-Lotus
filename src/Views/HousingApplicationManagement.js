@@ -36,3 +36,47 @@ const HousingApplicationManagement = () => {
     
         fetchApplications();
       }, []);
+      
+  // Handler to accept an application
+  const handleAccept = async (applicationId, roomId) => {
+    try {
+      const applicationRef = doc(db, "housingApplications", applicationId);
+      const roomRef = doc(db, "Rooms", roomId);
+
+      await updateDoc(applicationRef, { application: "Accepted" });
+      await updateDoc(roomRef, { NumberOfBed: increment(-1) });
+
+      alert(`Request Accepted for Application ID: ${applicationId}`);
+
+      setApplications((prevApplications) =>
+        prevApplications.map((app) =>
+          app.id === applicationId ? { ...app, application: "Accepted" } : app
+        )
+      );
+    } catch (error) {
+      console.error("Error updating application status: ", error);
+      alert("Failed to update application status. Please try again.");
+    }
+  };
+
+  // Handler to decline an application and update room bed count
+  const handleDecline = async (application) => {
+    try {
+      const applicationRef = doc(db, "housingApplications", application.id);
+      const roomRef = doc(db, "Rooms", application.roomId);
+
+      await updateDoc(applicationRef, { application: "Declined" });
+      await updateDoc(roomRef, { NumberOfBed: increment(1) });
+
+      alert(`Request Declined for Application ID: ${application.id} and bed count updated`);
+
+      setApplications((prevApplications) =>
+        prevApplications.map((app) =>
+          app.id === application.id ? { ...app, application: "Declined" } : app
+        )
+      );
+    } catch (error) {
+      console.error("Error declining application or updating room bed count: ", error);
+      alert("Failed to decline application or update bed count. Please try again.");
+    }
+  };
