@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth'; // For authentication
 import { getFirestore } from 'firebase/firestore'; // For Firestore database
-import { getStorage } from 'firebase/storage'; // For Firebase storage (if needed)
+import { getStorage } from 'firebase/storage'; // For Firebase storage 
 
 // our web app's Firebase configuration
 
@@ -23,5 +23,7 @@ const app = initializeApp(firebaseConfig);
 // Export Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app); // Keep this if using Firebase Storage, otherwise remove it
+export const storage = getStorage(app); 
 export default app;
+
+// created a firebass database and set it to public
