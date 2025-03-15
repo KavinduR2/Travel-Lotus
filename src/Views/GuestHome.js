@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { collection, getDocs, addDoc, query, where, orderBy } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, where} from 'firebase/firestore';
 import { db } from '../firebase';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { Container, Row, Col, Card, Button, Spinner, Alert, Form, ListGroup } from 'react-bootstrap';
@@ -51,7 +51,7 @@ const GuestHome = () => {
         };
  
         fetchAcceptedRooms();
-    }, [user?.email]);
+    }, [user]);
 
     // Fetch maintenance requests
     useEffect(() => {
@@ -72,7 +72,7 @@ const GuestHome = () => {
         };
  
         fetchAllMaintenanceRequests();
-    }, []);
+    }, [user?.email]);
  
     // Fetch messages
     const fetchMessages = async () => {
