@@ -89,3 +89,27 @@ const HousingApplicationManagement = () => {
       setSelectedApplication(null);
     };
   
+      // Download report handler
+  const handleDownloadReport = () => {
+    if (applications.length === 0) {
+      alert("No data available to export!");
+      return;
+    }
+
+    const exportData = applications.map((application) => ({
+      "Application ID": application.id,
+      "Room Number": application.RoomNo || "N/A",
+      "Customer Name": `${application.firstName || ""} ${application.lastName || ""}`.trim() || "N/A",
+      "Submission Date": formatDate(application.submissionDate),
+      "Address": application.currentAddress || "N/A",
+      "Phone Number": application.mobileNumber || "N/A",
+      "Application Status": application.application || "N/A",
+    }));
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Applications");
+    XLSX.writeFile(workbook, "HousingApplicationsReport.xlsx");
+  };
+
