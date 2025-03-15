@@ -172,5 +172,5 @@ const RequestMaintenance = () => {
     </>
   );
 };
- 
-export default RequestMaintenance
+
+export default RequestMaintenance;
