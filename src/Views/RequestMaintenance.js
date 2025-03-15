@@ -4,7 +4,7 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../firebase"; // Import Firestore instance
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
- 
+
 const RequestMaintenance = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
   if (user) {
@@ -17,9 +17,9 @@ const RequestMaintenance = () => {
     reason: "",
     State: "Pending"
   });
- 
+
   const [rooms, setRooms] = useState([]); // State to store room list
- 
+
   useEffect(() => {
     // Fetch rooms from Firestore
     const fetchRooms = async () => {
@@ -33,30 +33,30 @@ const RequestMaintenance = () => {
         alert("Failed to load rooms. Please try again.");
       }
     };
- 
+
     fetchRooms();
   }, []);
- 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
- 
+
     try {
       const currentDate = new Date().toISOString().split("T")[0]; // Extract only the date
- 
+
       // Add the date to the formData
       const formDataWithDate = {
         ...formData,
         submissionDate: currentDate, // Store only the date
       };
- 
+
       await addDoc(collection(db, "maintenanceRequests"), formDataWithDate);
       alert("Maintenance request submitted successfully!");
- 
+
       // Clear form after submission
       setFormData({
         roomNumber: "",
@@ -70,7 +70,7 @@ const RequestMaintenance = () => {
       alert("Failed to submit the maintenance request. Please try again.");
     }
   };
- 
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -84,7 +84,7 @@ const RequestMaintenance = () => {
           </div>
         </div>
       </nav>
- 
+
       <div
                 style={{
                     backgroundImage: `url('/Images/maintance.jpg')`, // Reference image in public folder
@@ -121,7 +121,7 @@ const RequestMaintenance = () => {
                       ))}
                     </Form.Select>
                   </Form.Group>
- 
+
                   <Form.Group className="mb-3">
                     <Form.Label>Full Name</Form.Label>
                     <Form.Control
@@ -133,7 +133,7 @@ const RequestMaintenance = () => {
                       required
                     />
                   </Form.Group>
- 
+
                   <Form.Group className="mb-3">
                     <Form.Label>Mobile</Form.Label>
                     <Form.Control
@@ -145,7 +145,7 @@ const RequestMaintenance = () => {
                       required
                     />
                   </Form.Group>
- 
+
                   <Form.Group className="mb-3">
                     <Form.Label>Reason</Form.Label>
                     <Form.Control
@@ -158,7 +158,7 @@ const RequestMaintenance = () => {
                       required
                     />
                   </Form.Group>
- 
+
                   <Button type="submit" variant="primary" className="w-100">
                     Submit
                   </Button>
