@@ -80,3 +80,12 @@ const HousingApplicationManagement = () => {
       alert("Failed to decline application or update bed count. Please try again.");
     }
   };
+    // Show application details in a popup
+    const handleViewForm = (application) => {
+      setSelectedApplication(application);
+    };
+  
+    const handleClosePopup = () => {
+      setSelectedApplication(null);
+    };
+  
