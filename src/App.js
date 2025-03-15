@@ -12,7 +12,11 @@ import Home from './Views/Home';
 import GuestHome from './Views/GuestHome';
 import LandOwnerHome from './Views/LandOwnerHome';
 
+import HousingApplication from './Views/HousingApplication';
+import AddRooms from './Views/AddRooms';
 import PaymentManagement from './Views/PaymentManagement';
+import MaintenanceManagement from './Views/MaintenanceManagement';
+import HousingApplicationManagement from './Views/HousingApplicationManagement';
 import Rooms from './Views/Rooms';
 import RequestMaintenance from './Views/RequestMaintenance' 
 
@@ -43,7 +47,11 @@ const App = () => {
           <Route path="/Guest-home" element={<GuestHome />} />
           <Route path="/landowner-home" element={<LandOwnerHome />} />
           
+          <Route path="/housing-application" element={<HousingApplication />} />
+          <Route path="/add-room" element={<AddRooms />} />
           <Route path="/PaymentManagement" element={<PaymentManagement />} />
+          <Route path="/MaintenanceManagement" element={<MaintenanceManagement />} />
+          <Route path="/HousingApplicationManagement" element={<HousingApplicationManagement />} />
           <Route path="/RequestMaintenance" element={<RequestMaintenance />} />
 
           {/* <Route path="/Guest-profile" element={<GuestProfile />} />  */}
