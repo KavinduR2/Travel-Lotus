@@ -18,6 +18,7 @@ import Rooms from './Views/Rooms';
 import PaymentPage from './Views/PaymentPage';
 import AdminRegister from './Views/AdminRegister';
 import LandingPage from './Views/LandingPage';
+import Contact from './Views/Contact';
 import Chat from './Views/Chat';
 
 
@@ -45,6 +46,7 @@ const App = () => {
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/chat/:GuestEmail" element={<Chat />} />
           <Route path="/admin-register" element={<AdminRegister />} />
+          <Route path="/Contact" element={<Contact />} />
           
         </Routes>
       </Router>
