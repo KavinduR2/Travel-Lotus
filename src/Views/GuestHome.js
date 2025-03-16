@@ -5,7 +5,7 @@ import { db } from '../firebase';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { Container, Row, Col, Card, Button, Spinner, Alert, Form, ListGroup, Modal } from 'react-bootstrap';
 import { FaBars, FaComment, FaExclamationTriangle, FaUser, FaBed, FaTools, FaSignOutAlt } from 'react-icons/fa';
- 
+
 const GuestHome = () => {
     const [showSidebar, setShowSidebar] = useState(false);
     const handleCloseSidebar = () => setShowSidebar(false);
