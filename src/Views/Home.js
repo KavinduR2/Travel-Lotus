@@ -19,6 +19,8 @@ const Home = () => {
                 // Use onAuthStateChanged to properly detect authentication state
                 const unsubscribe = auth.onAuthStateChanged(async (user) => {
                     if (!user) {
+                        // Clear session storage when no user is found
+                        sessionStorage.removeItem('user');
                         navigate('/login');
                         return;
                     }
@@ -33,6 +35,15 @@ const Home = () => {
                             const userData = docSnap.data();
                             setUserRole(userData.role);
                             console.log("User role found:", userData.role);
+                            
+                            // Store user data in sessionStorage
+                            const userToStore = {
+                                uid: user.uid,
+                                email: user.email,
+                                role: userData.role
+                            };
+                            sessionStorage.setItem('user', JSON.stringify(userToStore));
+                            
                             // Stop loading as soon as we have the role
                             setLoading(false);
                         } else {
@@ -49,6 +60,15 @@ const Home = () => {
                             
                             // Set role and stop loading immediately
                             setUserRole('Guest');
+                            
+                            // Store user data in sessionStorage with default role
+                            const userToStore = {
+                                uid: user.uid,
+                                email: user.email,
+                                role: 'Guest'
+                            };
+                            sessionStorage.setItem('user', JSON.stringify(userToStore));
+                            
                             setLoading(false);
                         }
                     } catch (docError) {
@@ -73,6 +93,8 @@ const Home = () => {
     const handleSignOut = async () => {
         try {
             await auth.signOut();
+            // Clear session storage on sign out
+            sessionStorage.removeItem('user');
             navigate('/login');
         } catch (error) {
             console.error("Error signing out:", error);
