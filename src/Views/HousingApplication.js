@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { collection, addDoc, doc, updateDoc, getDoc } from "firebase/firestore"; // Import Firestore methods
 import { db } from "../firebase"; // Import Firestore database instance
 import { Link, useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
-import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Card, Offcanvas, Modal } from "react-bootstrap";
+import { FaHome, FaBed, FaUser, FaMoneyBillWave, FaExclamationTriangle, FaTools, FaSignOutAlt, FaBars } from "react-icons/fa"; // Import icons from react-icons
 
 const HousingApplication = () => {
     const location = useLocation(); // Access location object
@@ -24,6 +25,10 @@ const HousingApplication = () => {
         status: "",
         application: "Pending"
     });
+
+    const [showSidebar, setShowSidebar] = useState(false); // State for sidebar visibility
+    const [showEmergencyModal, setShowEmergencyModal] = useState(false); // State for emergency modal
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -65,41 +70,214 @@ const HousingApplication = () => {
 
     return (
         <>
+            {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div className="container-fluid">
-                    <Link className="navbar-brand" to="/home">CRIBCLIQUE</Link>
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                        <ul className="navbar-nav ms-auto">
-                            <li className="nav-item">
-                                <Link to="/home" className="nav-link">Profile</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to="/rooms" className="nav-link">Rooms</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to="/RequestMaintenance" className="nav-link">Request Maintenance</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to="/" className="nav-link">Logout</Link>
-                            </li>
-                        </ul>
+                <div className="container-fluid px-4">
+                    {/* Sidebar Toggle Button */}
+                    <Button 
+                        variant="outline-light" 
+                        className="me-2" 
+                        onClick={() => setShowSidebar(true)}
+                    >
+                        <FaBars size={20} />
+                    </Button>
+                    
+                    {/* Brand Logo */}
+                    <div className="d-flex justify-content-center align-items-center flex-grow-1">
+                        <img 
+                            src="/images/logo.png"
+                            alt="Travel Lotus Logo"
+                            height="50" 
+                            className="me-2"
+                        />
+                        <Link className="navbar-brand mb-0" to="/home" style={{ 
+                            fontSize: '1.8rem',
+                            fontWeight: 'bold',
+                            color: '#ffffff',
+                            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+                            letterSpacing: '1px',
+                            textDecoration: 'none'
+                        }}>
+                            Travel Lotus
+                            <span style={{ 
+                                fontSize: '0.5em', 
+                                display: 'block', 
+                                color: '#fff',
+                                fontWeight: 'normal',
+                                opacity: 0.9
+                            }}>
+                                Your Journey, Your Way
+                            </span>
+                        </Link>
+                    </div>
+
+                    {/* Emergency Button */}
+                    <div className="ms-auto">
+                        <Button
+                            variant="danger"
+                            className="me-2 rounded-pill d-flex align-items-center"
+                            onClick={() => setShowEmergencyModal(true)}
+                            style={{
+                                padding: '0.1rem 0.5rem',
+                                boxShadow: '0 0 10px rgba(255, 0, 0, 0.5)',
+                                border: '2px solid #ff0000',
+                                fontWeight: 'bold',
+                                transition: 'all 0.3s ease'
+                            }}
+                        >
+                            <FaExclamationTriangle className="me-2" size={14} />
+                            Emergency
+                        </Button>
                     </div>
                 </div>
             </nav>
-            <Container className="mt-5">
-                <div className="content">
-                    <h2 className="text-center mb-4">Housing Application</h2>
-                    <Card className="mb-5 p-4">
-                        <Card.Body>
-                            <h3>Selected Room Details</h3>
-                            {roomDetails && (
-                                <div className="room-info mb-5">
-                                    <strong>Room No:</strong> {roomDetails.RoomNo}<br />
-                                    <strong>Floor:</strong> {roomDetails.Floor}<br />
-                                    <strong>No of Beds:</strong> {roomDetails.NumberOfBed}<br />
-                                    <strong>Description:</strong> {roomDetails.description}<br />
+
+            {/* Sidebar */}
+            <Offcanvas show={showSidebar} onHide={() => setShowSidebar(false)} backdrop="static">
+                <Offcanvas.Header className="bg-dark text-white">
+                    <Offcanvas.Title>
+                        <div className="d-flex align-items-center">
+                            <img 
+                                src="/images/logo.png"
+                                alt="Travel Lotus Logo"
+                                height="40"
+                                className="me-2"
+                            />
+                            <div>
+                                <div style={{ 
+                                    fontSize: '1.5rem', 
+                                    fontWeight: 'bold',
+                                    background: 'linear-gradient(45deg, #0069d9, #8e44ad)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                }}>
+                                    Travel Lotus
                                 </div>
-                            )}
+                                <span style={{ 
+                                    fontSize: '0.7em', 
+                                    display: 'block', 
+                                    color: '#fff',
+                                    fontWeight: 'normal',
+                                    opacity: 0.8
+                                }}>
+                                    Your Journey, Your Way
+                                </span>
+                            </div>
+                        </div>
+                    </Offcanvas.Title>
+                    <button 
+                        type="button" 
+                        className="btn-close btn-close-white" 
+                        aria-label="Close"
+                        onClick={() => setShowSidebar(false)}
+                        style={{position: 'absolute', right: '1rem'}}
+                    />
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <div className="d-flex flex-column">
+                        <div className="p-3 border-bottom">
+                            <div className="d-flex align-items-center">
+                                <div className="bg-primary rounded-circle p-3 text-white me-3">
+                                    <FaUser size={24} />
+                                </div>
+                                <div>
+                                    <h5 className="mb-0">{user ? user.email : 'Guest'}</h5>
+                                    <small className="text-muted">Guest Account</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="mt-3">
+                            <Link to="/home" className="btn btn-light w-100 text-start d-flex align-items-center mb-3 p-3">
+                                <FaUser className="me-3" /> Profile
+                            </Link>
+                            <Link to="/rooms" className="btn btn-light w-100 text-start d-flex align-items-center mb-3 p-3">
+                                <FaBed className="me-3" /> Rooms
+                            </Link>
+                            <Link to="/RequestMaintenance" className="btn btn-light w-100 text-start d-flex align-items-center mb-3 p-3">
+                                <FaTools className="me-3" /> Request Maintenance
+                            </Link>
+                            <Link to="/" className="btn btn-danger w-100 text-start d-flex align-items-center mb-3 p-3">
+                                <FaSignOutAlt className="me-3" /> Logout
+                            </Link>
+                        </div>
+                    </div>
+                </Offcanvas.Body>
+            </Offcanvas>
+
+            {/* Main Content */}
+            <div style={{
+                backgroundImage: `url('/Images/RoomsImge.webp')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                minHeight: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                color: '#fff',
+                paddingTop: '2rem',
+                paddingBottom: '5rem',
+            }}>
+                <Container className="mt-4">
+                    <div className="text-center mb-4">
+                        <h1 className="display-5 fw-bold" style={{ 
+                            color: 'white', 
+                            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
+                            background: 'rgba(0, 0, 0, 0.3)',
+                            padding: '12px 25px',
+                            borderRadius: '10px',
+                            display: 'inline-block'
+                        }}>
+                            Housing Application
+                        </h1>
+                    </div>
+
+                    <Card className="shadow-lg border-0 mb-5 transform-hover" style={{
+                        transform: 'translateY(0)',
+                        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                        overflow: 'hidden',
+                        borderRadius: '15px',
+                        background: 'rgba(255, 255, 255, 0.95)'
+                    }}>
+                        <Card.Header className="text-white py-3" style={{
+                            background: 'linear-gradient(135deg, #4a6bff, #2541b2)',
+                            borderBottom: 'none',
+                            borderRadius: '15px 15px 0 0'
+                        }}>
+                            <h4 className="mb-0 fw-bold">Selected Room {roomDetails.RoomNo}</h4>
+                        </Card.Header>
+                        <Card.Body>
+                            <div className="mb-4 p-4 rounded" style={{
+                                background: 'linear-gradient(to right, #f8f9fa, #e9ecef)',
+                                boxShadow: 'inset 0 0 10px rgba(0,0,0,0.05)',
+                                borderLeft: '4px solid #4a6bff'
+                            }}>
+                                <div className="d-flex align-items-center mb-3">
+                                    <div className="p-2 rounded-circle me-3" style={{ background: 'rgba(74, 107, 255, 0.2)' }}>
+                                        <FaHome className="text-primary" size={24} />
+                                    </div>
+                                    <h5 className="mb-0">Floor: <span className="fw-bold">{roomDetails.Floor}</span></h5>
+                                </div>
+                                <div className="d-flex align-items-center mb-3">
+                                    <div className="p-2 rounded-circle me-3" style={{ background: 'rgba(74, 107, 255, 0.2)' }}>
+                                        <FaBed className="text-primary" size={24} />
+                                    </div>
+                                    <h5 className="mb-0">Available Beds: <span className="fw-bold">{roomDetails.NumberOfBed}</span></h5>
+                                </div>
+                                {roomDetails.RoomPrice && (
+                                    <div className="d-flex align-items-center mb-3">
+                                        <div className="p-2 rounded-circle me-3" style={{ background: 'rgba(40, 167, 69, 0.2)' }}>
+                                            <FaMoneyBillWave className="text-success" size={24} />
+                                        </div>
+                                        <h5 className="mb-0">Price: <span className="fw-bold text-success">${roomDetails.RoomPrice}</span></h5>
+                                    </div>
+                                )}
+                                <div className="mt-4 pt-3 border-top">
+                                    <h5 className="mb-2 text-primary">Room Description:</h5>
+                                    <p className="ms-2 mb-0 fst-italic" style={{ lineHeight: '1.6' }}>{roomDetails.description || "Experience comfort and convenience in our well-appointed room."}</p>
+                                </div>
+                            </div>
+                            
                             {/* Booking Form */}
                             <h4>Booking Details</h4>
                             <Form onSubmit={handleSubmit}>
@@ -185,8 +363,52 @@ const HousingApplication = () => {
                             </Form>
                         </Card.Body>
                     </Card>
-                </div>
-            </Container>
+                </Container>
+            </div>
+
+            {/* Footer */}
+            <footer className="bg-dark text-white py-4 w-100">
+                <Container>
+                    <Row className="text-center text-md-start">
+                        <Col md={4} className="mb-3 mb-md-0">
+                            <h5 className="mb-3">Travel Lotus</h5>
+                            <p className="mb-0">Your Journey, Your Way</p>
+                            <p className="mb-0">© 2025 Travel Lotus. All rights reserved.</p>
+                        </Col>
+                        <Col md={4} className="mb-3 mb-md-0">
+                            <h5 className="mb-3">Quick Links</h5>
+                            <ul className="list-unstyled">
+                                <li><Link to="/home" className="text-white text-decoration-none">Home</Link></li>
+                                <li><Link to="/rooms" className="text-white text-decoration-none">Rooms</Link></li>
+                                <li><Link to="/requestMaintenance" className="text-white text-decoration-none">Maintenance</Link></li>
+                            </ul>
+                        </Col>
+                        <Col md={4}>
+                            <h5 className="mb-3">Contact</h5>
+                            <p className="mb-0">Email: TravelLotuscc@gmail.com</p>
+                            <p className="mb-0">FaceBook : Travel Lotus</p>
+                        </Col>
+                    </Row>
+                </Container>
+            </footer>
+
+            {/* Emergency Modal */}
+            <Modal show={showEmergencyModal} onHide={() => setShowEmergencyModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Emergency Contacts</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <h5 className="text-center mb-4">**TRAVEL LOTUS SOS**</h5>
+                    <p><strong>Travel Lotus Admin Panel:</strong> 0000</p>
+                    <p><strong>Sri Lankan Police:</strong> 119</p>
+                    <p><strong>Ambulance:</strong> 1990</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowEmergencyModal(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 };
