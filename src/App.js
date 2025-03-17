@@ -11,6 +11,7 @@ import Login from './Views/Login';
 import Home from './Views/Home';
 import GuestHome from './Views/GuestHome';
 import LandOwnerHome from './Views/LandOwnerHome';
+import Developers from './Views/Developers';
 
 import HousingApplication from './Views/HousingApplication';
 import AddRooms from './Views/AddRooms';
@@ -40,6 +41,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path='/' element={<LandingPage />} />
+          <Route path="/developers" element={<Developers />} />
           <Route path="/home" element={<Home />} />
           <Route path="/rooms" element={<Rooms />} />
           

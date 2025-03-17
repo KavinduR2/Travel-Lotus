@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { FaBed, FaBuilding, FaHandshake, FaRobot } from 'react-icons/fa';
+import { FaBed, FaBuilding, FaHandshake, FaRobot, FaUsers } from 'react-icons/fa';
 import LanguageSelector from './components/LanguageSelector';
 import TransportationLinks from './components/TransportationLinks';
 import ChatAssistant from './components/ChatAssistant';
@@ -69,6 +69,13 @@ const LandingPage = () => {
                   currentLanguage={language}
                   onChange={handleLanguageChange}
                 />
+              </li>
+              <li className="nav-item me-3">
+                <Link to="/developers" className="nav-link">
+                  <Button variant="outline-light" className="d-flex align-items-center">
+                    <FaUsers className="me-2" /> Developers
+                  </Button>
+                </Link>
               </li>
               <li className="nav-item">
                 <Link to="/login" className="nav-link">
