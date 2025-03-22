@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { doc, updateDoc, collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Form, Button, Card, Offcanvas, Spinner, Alert, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Card, Offcanvas, Spinner, Modal } from 'react-bootstrap';
 import { FaBars, FaExclamationTriangle, FaUser, FaBed, FaTools, FaSignOutAlt, FaCreditCard } from 'react-icons/fa';
 
 const PaymentPage = () => {
