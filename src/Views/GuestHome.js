@@ -4,7 +4,7 @@ import { collection, getDocs, addDoc, query, where} from 'firebase/firestore';
 import { db } from '../firebase';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { Container, Row, Col, Card, Button, Spinner, Alert, Form, ListGroup, Modal } from 'react-bootstrap';
-import { FaBars, FaComment, FaExclamationTriangle, FaUser, FaBed, FaTools, FaSignOutAlt } from 'react-icons/fa';
+import { FaBars, FaExclamationTriangle, FaUser, FaBed, FaTools, FaSignOutAlt } from 'react-icons/fa';
 
 const GuestHome = () => {
     const [showSidebar, setShowSidebar] = useState(false);
@@ -331,7 +331,7 @@ const GuestHome = () => {
             }}>
                 <div
                     style={{
-                        backgroundImage: `url('/Images/GuestHome.webp')`,
+                        backgroundImage: `url('/Images/GuestHome.jpg')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         flexGrow: 1,
@@ -449,28 +449,6 @@ const GuestHome = () => {
                     </Row>
                 </Container>
 
-                {/* Chat Button */}
-                <Button 
-                    onClick={handleShow}
-                    className="chat-button"
-                    style={{
-                        position: 'fixed',
-                        bottom: '30px',
-                        right: '30px',
-                        borderRadius: '50%',
-                        width: '60px',
-                        height: '60px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: '#0069d9',
-                        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
-                        border: 'none',
-                        zIndex: 1000
-                    }}
-                >
-                    <FaComment size={24} />
-                </Button>
             </div>
 
                 {/* Footer */}
