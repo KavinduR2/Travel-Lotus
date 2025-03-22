@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import { collection, getDocs, query, where, addDoc } from "firebase/firestore"; // Firestore imports
-import { db } from "../firebase"; // Update this path to match our Firebase config file
+import { collection, getDocs, query, where, addDoc, serverTimestamp, onSnapshot } from "firebase/firestore"; // Firestore imports
+import { db } from "../firebase"; // Update this path to match your Firebase config file
 import { Container, Row, Col, Card, Button, Spinner, Form, ListGroup, Modal } from "react-bootstrap";
 import { FaBed, FaHome, FaMoneyBillWave, FaExclamationTriangle, FaTools, FaSignOutAlt, FaComment, FaBars, FaUser } from "react-icons/fa"; // Import icons from react-icons
 
@@ -26,11 +26,11 @@ const Rooms = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [chatLoading, setChatLoading] = useState(false);
-    const [show, setShow] = useState(false);
+    const [showChat, setShowChat] = useState(false);
 
-    const handleClose = () => setShow(false);
-    const handleShow = () => {
-        setShow(true);
+    const handleCloseChat = () => setShowChat(false);
+    const handleShowChat = () => {
+        setShowChat(true);
         fetchMessages();
     };
     const handleCloseSidebar = () => setShowSidebar(false);
@@ -43,16 +43,16 @@ const Rooms = () => {
                 collection(db, 'chats'),
                 where('GuestEmail', '==', user.email)
             );
-    
+
             const querySnapshot = await getDocs(q);
             const chats = [];
             querySnapshot.forEach((doc) => {
                 chats.push(doc.data());
             });
-    
+
             // Sort messages in ascending order based on timestamp
             const sortedChats = sortMessagesByTimestamp(chats);
-    
+
             setMessages(sortedChats);
             setChatLoading(false);
         } catch (error) {
@@ -75,7 +75,7 @@ const Rooms = () => {
                 GuestEmail: user.email,
                 landownerEmail: "landowner@example.com",
                 message: newMessage.trim(),
-                timestamp: new Date(),
+                timestamp: serverTimestamp(),
                 Sender: user.email,
             };
 
@@ -87,7 +87,7 @@ const Rooms = () => {
         } catch (error) {
             console.error('Error sending message:', error);
         }
-    };    
+    };
 
     // Get user from session storage
     const user = JSON.parse(sessionStorage.getItem('user'));
@@ -116,34 +116,35 @@ const Rooms = () => {
     const handleApply = (room) => {
         navigate("/housing-application", { state: { roomDetails: room } });
     };
- 
+
     // Handle currency change
     const handleCurrencyChange = (event) => {
         setCurrency(event.target.value);
     };
- 
+
     return (
         <>
+            {/* Navbar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container-fluid px-4">
                     {/* Menu Toggle Button */}
-                    <Button 
-                        variant="outline-light" 
-                        className="me-2" 
+                    <Button
+                        variant="outline-light"
+                        className="me-2"
                         onClick={() => setShowSidebar(true)}
                     >
                         <FaBars size={20} />
                     </Button>
-                    
+
                     {/* Centered Logo */}
                     <div className="d-flex justify-content-center align-items-center flex-grow-1">
-                        <img 
+                        <img
                             src="/images/logo.png"
                             alt="Travel Lotus Logo"
-                            height="50" 
+                            height="50"
                             className="me-2"
                         />
-                        <Link className="navbar-brand mb-0" to="/home" style={{ 
+                        <Link className="navbar-brand mb-0" to="/home" style={{
                             fontSize: '1.8rem',
                             fontWeight: 'bold',
                             color: '#ffffff',
@@ -152,9 +153,9 @@ const Rooms = () => {
                             textDecoration: 'none'
                         }}>
                             Travel Lotus
-                            <span style={{ 
-                                fontSize: '0.5em', 
-                                display: 'block', 
+                            <span style={{
+                                fontSize: '0.5em',
+                                display: 'block',
                                 color: '#fff',
                                 fontWeight: 'normal',
                                 opacity: 0.9
@@ -184,21 +185,21 @@ const Rooms = () => {
                     </div>
                 </div>
             </nav>
- 
+
             {/* Sidebar Navigation */}
             <Offcanvas show={showSidebar} onHide={() => setShowSidebar(false)} backdrop="static">
                 <Offcanvas.Header className="bg-dark text-white">
                     <Offcanvas.Title>
                         <div className="d-flex align-items-center">
-                            <img 
+                            <img
                                 src="/images/logo.png"
                                 alt="Travel Lotus Logo"
                                 height="40"
                                 className="me-2"
                             />
                             <div>
-                                <div style={{ 
-                                    fontSize: '1.5rem', 
+                                <div style={{
+                                    fontSize: '1.5rem',
                                     fontWeight: 'bold',
                                     background: 'linear-gradient(45deg, #0069d9, #8e44ad)',
                                     WebkitBackgroundClip: 'text',
@@ -206,9 +207,9 @@ const Rooms = () => {
                                 }}>
                                     Travel Lotus
                                 </div>
-                                <span style={{ 
-                                    fontSize: '0.7em', 
-                                    display: 'block', 
+                                <span style={{
+                                    fontSize: '0.7em',
+                                    display: 'block',
                                     color: '#fff',
                                     fontWeight: 'normal',
                                     opacity: 0.8
@@ -218,12 +219,12 @@ const Rooms = () => {
                             </div>
                         </div>
                     </Offcanvas.Title>
-                    <button 
-                        type="button" 
-                        className="btn-close btn-close-white" 
+                    <button
+                        type="button"
+                        className="btn-close btn-close-white"
                         aria-label="Close"
                         onClick={handleCloseSidebar}
-                        style={{position: 'absolute', right: '1rem'}}
+                        style={{ position: 'absolute', right: '1rem' }}
                     />
                 </Offcanvas.Header>
                 <Offcanvas.Body>
@@ -239,7 +240,7 @@ const Rooms = () => {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="mt-3">
                             <Link to="/home" className="btn btn-light w-100 text-start d-flex align-items-center mb-3 p-3">
                                 <FaUser className="me-3" /> Profile
@@ -258,6 +259,7 @@ const Rooms = () => {
                 </Offcanvas.Body>
             </Offcanvas>
 
+            {/* Main Content */}
             <div style={{
                 backgroundImage: `url('/Images/RoomsImge.webp')`,
                 backgroundSize: 'cover',
@@ -270,12 +272,11 @@ const Rooms = () => {
                 paddingTop: '2rem',
                 paddingBottom: '5rem',
             }}>
-
                 <Container className="mt-4">
                     {/* Currency selection field with improved styling */}
                     <div className="text-center mb-4">
-                        <h1 className="display-5 fw-bold" style={{ 
-                            color: 'white', 
+                        <h1 className="display-5 fw-bold" style={{
+                            color: 'white',
                             textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
                             background: 'rgba(0, 0, 0, 0.3)',
                             padding: '12px 25px',
@@ -285,7 +286,7 @@ const Rooms = () => {
                             Available Rooms
                         </h1>
                     </div>
-                    
+
                     <Row className="mb-4 justify-content-center">
                         <Col md={4} lg={3}>
                             <Card className="shadow border-0">
@@ -329,14 +330,14 @@ const Rooms = () => {
                                         cursor: 'pointer',
                                         overflow: 'hidden',
                                     }}
-                                    onMouseOver={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(-5px)';
-                                        e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
-                                    }}
-                                    onMouseOut={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                        e.currentTarget.style.boxShadow = '';
-                                    }}>
+                                        onMouseOver={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(-5px)';
+                                            e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '';
+                                        }}>
                                         <Card.Header className="bg-primary text-white py-3">
                                             <h4 className="mb-0">Room {room.RoomNo}</h4>
                                         </Card.Header>
@@ -356,17 +357,28 @@ const Rooms = () => {
                                                         (room.RoomPrice * currencyRates[currency]).toFixed(2) + " " + currency : "N/A"}</span>
                                                 </div>
                                             </div>
-                                            <p><strong>Description:</strong><br/>{room.description}</p>
+                                            <p><strong>Description:</strong><br />{room.description}</p>
                                         </Card.Body>
                                         <Card.Footer className="bg-white border-0 pb-3">
                                             <Button
                                                 variant={room.NumberOfBed === 0 ? "secondary" : "primary"}
                                                 disabled={room.NumberOfBed === 0}
                                                 onClick={() => handleApply(room)}
-                                                className="w-100"
+                                                className="w-100 mb-2"
                                                 size="lg"
                                             >
                                                 {room.NumberOfBed === 0 ? "Unavailable" : "Apply Now"}
+                                            </Button>
+
+                                            {/* Contact Landlord Button */}
+                                            <Button
+                                                variant="outline-primary"
+                                                onClick={handleShowChat}
+                                                className="w-100"
+                                                size="lg"
+                                            >
+                                                <FaComment className="me-2" />
+                                                Contact Landlord
                                             </Button>
                                         </Card.Footer>
                                     </Card>
@@ -377,48 +389,26 @@ const Rooms = () => {
                 </Container>
             </div>
 
-            {/* Chat Button */}
-            <Button 
-                onClick={handleShow}
-                className="chat-button"
-                style={{
-                    position: 'fixed',
-                    bottom: '30px',
-                    right: '30px',
-                    borderRadius: '50%',
-                    width: '60px',
-                    height: '60px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: '#0069d9',
-                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
-                    border: 'none',
-                    zIndex: 1000
-                }}
-            >
-                <FaComment size={24} />
-            </Button>
-
             {/* Chat Offcanvas */}
-            <Offcanvas show={show} onHide={handleClose} placement="end">
+            <Offcanvas show={showChat} onHide={handleCloseChat} placement="end">
                 <Offcanvas.Header closeButton className="bg-primary text-white">
                     <Offcanvas.Title>Chat with Landlord</Offcanvas.Title>
                 </Offcanvas.Header>
-                <Offcanvas.Body>
-                    {chatLoading ? (
-                        <div className="text-center">
-                            <Spinner animation="border" variant="primary" />
-                        </div>
-                    ) : (
-                        <div className="chat-container" style={{ height: '70vh', overflowY: 'auto' }}>
+                <Offcanvas.Body className="d-flex flex-column" style={{ height: '80vh' }}>
+                    {/* Chat Messages */}
+                    <div className="flex-grow-1 overflow-auto mb-3">
+                        {chatLoading ? (
+                            <div className="text-center">
+                                <Spinner animation="border" variant="primary" />
+                            </div>
+                        ) : (
                             <ListGroup>
                                 {messages.map((msg, index) => (
-                                    <ListGroup.Item 
-                                        key={index} 
+                                    <ListGroup.Item
+                                        key={index}
                                         className={`mb-2 rounded ${msg.Sender === user?.email ? "bg-primary text-white ms-auto" : "bg-light"}`}
-                                        style={{ 
-                                            maxWidth: '80%', 
+                                        style={{
+                                            maxWidth: '80%',
                                             width: 'fit-content',
                                             border: 'none',
                                             padding: '10px 15px',
@@ -432,23 +422,27 @@ const Rooms = () => {
                                     </ListGroup.Item>
                                 ))}
                             </ListGroup>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
-                    <Form.Group className="mt-3 position-fixed" style={{ bottom: '20px', left: '20px', right: '20px' }}>
-                        <div className="d-flex">
-                            <Form.Control
-                                type="text"
-                                placeholder="Type your message..."
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                className="me-2"
-                            />
-                            <Button onClick={sendMessage} variant="primary">
-                                Send
-                            </Button>
-                        </div>
-                    </Form.Group>
+                    {/* Message Input Field */}
+                    <div className="mt-auto">
+                        <Form.Group>
+                            <div className="d-flex">
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Type your message..."
+                                    value={newMessage}
+                                    onChange={(e) => setNewMessage(e.target.value)}
+                                    className="me-2"
+                                    style={{ flex: 1, maxWidth: 'calc(100% - 80px)' }} // Ensures the input field doesn't overflow
+                                />
+                                <Button onClick={sendMessage} variant="primary" style={{ width: '80px' }}>
+                                    Send
+                                </Button>
+                            </div>
+                        </Form.Group>
+                    </div>
                 </Offcanvas.Body>
             </Offcanvas>
 
@@ -495,9 +489,8 @@ const Rooms = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
         </>
     );
 };
- 
+
 export default Rooms;
