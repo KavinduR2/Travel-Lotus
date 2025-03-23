@@ -27,7 +27,7 @@ import AdminRegister from './Views/AdminRegister';
 import LandingPage from './Views/LandingPage';
 import Contact from './Views/Contact';
 import Chat from './Views/Chat';
-
+import LandLoardRooms from './Views/LandLoardRooms';
 
 
 const App = () => {
@@ -44,6 +44,7 @@ const App = () => {
           <Route path="/developers" element={<Developers />} />
           <Route path="/home" element={<Home />} />
           <Route path="/rooms" element={<Rooms />} />
+          <Route path="/landLoardwiseRooms" element={<LandLoardRooms />} />
           
           {/* <Route path="/" element={<Login />} /> */}
           <Route path="/Guest-home" element={<GuestHome />} />

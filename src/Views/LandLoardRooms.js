@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { collection, getDocs, query, where, addDoc } from "firebase/firestore"; // Firestore imports
 import { db } from "../firebase"; // Update this path to match our Firebase config file
@@ -16,7 +16,7 @@ const currencyRates = {
     KES: 150, 
 };
 
-const Rooms = () => {
+const LandLoardRooms = () => {
     const [rooms, setRooms] = useState([]); // State to hold rooms data
     const [loading, setLoading] = useState(true); // Loading state
     const [currency, setCurrency] = useState("USD"); // Default currency
@@ -27,7 +27,8 @@ const Rooms = () => {
     const [newMessage, setNewMessage] = useState('');
     const [chatLoading, setChatLoading] = useState(false);
     const [show, setShow] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
+    const location = useLocation();
+    const { landLoard } = location.state || {};
 
     const handleClose = () => setShow(false);
     const handleShow = () => {
@@ -95,15 +96,17 @@ const Rooms = () => {
     // Get user from session storage
     const user = JSON.parse(sessionStorage.getItem('user'));
 
-    const [landLoards,setLandLoards] = useState([]) 
+    const [landLoards,setLandLoards] = [] 
 
     // Fetch rooms data from Firestore
     useEffect(() => {
 
+        console.log(landLoard)
+
 
         const fetchRoomsByLandlord = async (landlordId) => {
             try {
-                const roomsQuery = query(collection(db, "Rooms"));
+                const roomsQuery = query(collection(db, "Rooms"), where("landlord", "==", landlordId));
                 const querySnapshot = await getDocs(roomsQuery);
                 
                 const roomData = [];
@@ -120,7 +123,8 @@ const Rooms = () => {
             }
         };
         
-        fetchRoomsByLandlord();
+        // Call the function with a specific landlord ID
+        fetchRoomsByLandlord(landLoard);
 
 
         const fetchRooms = async () => {
@@ -143,7 +147,7 @@ const Rooms = () => {
                 // setRooms(roomData);
                 setLandLoards(Array.from(landlordSet)); // Store landlords in state
                 // setLoading(false);
-                // console.log("Landlords:", landlordSet);
+                console.log("Landlords:", landlordSet);
             } catch (error) {
                 console.error("Error fetching rooms: ", error);
                 setLoading(false);
@@ -162,17 +166,6 @@ const Rooms = () => {
     // Handle currency change
     const handleCurrencyChange = (event) => {
         setCurrency(event.target.value);
-    };
-
-
-    const handleLandlordClick = (landlord) => {
-
-        navigate("/landLoardwiseRooms", { state: { landLoard: landlord } });
-
-        // console.log("Landlord clicked:", landlord); 
-        // const filteredRooms = rooms.filter(room => room.landlord === landlord);
-        // console.log(`Rooms for ${landlord}:`, filteredRooms);
-        // setRooms(filteredRooms); 
     };
  
     return (
@@ -335,19 +328,11 @@ const Rooms = () => {
                             borderRadius: '10px',
                             display: 'inline-block'
                         }}>
-                            Landlord Wise Rooms
+                            Available Rooms From {landLoard}
                         </h1>
                     </div>
-
-                    <input
-                        type="text"
-                        placeholder="Search landlords..."
-                        className="form-control mb-3"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                                        
-                    {/* <Row className="mb-4 justify-content-center">
+                    
+                    <Row className="mb-4 justify-content-center">
                         <Col md={4} lg={3}>
                             <Card className="shadow border-0">
                                 <Card.Body>
@@ -365,66 +350,74 @@ const Rooms = () => {
                                 </Card.Body>
                             </Card>
                         </Col>
-                    </Row> */}
+                    </Row>
 
                     {loading ? (
                         <div className="text-center">
                             <Spinner animation="border" variant="light" size="lg" />
-                            <p className="mt-3 text-white">Loading available Landloards...</p>
+                            <p className="mt-3 text-white">Loading available rooms...</p>
                         </div>
                     ) : rooms.length === 0 ? (
                         <div className="text-center">
                             <Card className="shadow-lg border-0 p-4">
                                 <Card.Body>
-                                    <p className="mb-0">No Landloars available at the moment.</p>
+                                    <p className="mb-0">No rooms available at the moment.</p>
                                 </Card.Body>
                             </Card>
                         </div>
                     ) : (
                         <Row>
-
-
-{landLoards
-    .filter((landlord) => landlord.toLowerCase().includes(searchTerm.toLowerCase())) // Filter landlords
-    .map((landlord, index) => (
-        <Col key={index} md={6} lg={4} className="mb-4">
-            <Card 
-                className="shadow-lg border-0 h-100 transform-hover" 
-                style={{
-                    transform: 'translateY(0)',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    cursor: 'pointer',
-                    overflow: 'hidden',
-                }}
-                onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-5px)';
-                    e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
-                }}
-                onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '';
-                }}
-            >
-                <Card.Header className="bg-primary text-white py-3">
-                    <h4 className="mb-0">Landlord: {landlord.split('@')[0]}</h4>
-                </Card.Header>
-                <Card.Body>
-                    <p><strong>Click to view rooms</strong></p>
-                </Card.Body>
-                <Card.Footer className="bg-white border-0 pb-3">
-                    <Button 
-                        variant="primary" 
-                        className="w-100" 
-                        size="lg"
-                        onClick={() => handleLandlordClick(landlord.split('@')[0])}
-                    >
-                        View Rooms
-                    </Button>
-                </Card.Footer>
-            </Card>
-        </Col>
-    ))}
-
+                            {rooms.map((room) => (
+                                <Col key={room.id} md={6} lg={4} className="mb-4">
+                                    <Card className="shadow-lg border-0 h-100 transform-hover" style={{
+                                        transform: 'translateY(0)',
+                                        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                                        cursor: 'pointer',
+                                        overflow: 'hidden',
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.currentTarget.style.transform = 'translateY(-5px)';
+                                        e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = '';
+                                    }}>
+                                        <Card.Header className="bg-primary text-white py-3">
+                                            <h4 className="mb-0">Room {room.RoomNo}</h4>
+                                        </Card.Header>
+                                        <Card.Body>
+                                            <div className="mb-3 p-2 bg-light rounded">
+                                                <div className="d-flex align-items-center mb-2">
+                                                    <FaHome className="me-2 text-primary" size={18} />
+                                                    <h5 className="mb-0">Floor: {room.Floor}</h5>
+                                                </div>
+                                                <div className="d-flex align-items-center mb-2">
+                                                    <FaBed className="me-2 text-primary" size={18} />
+                                                    <span><strong>Beds:</strong> {room.NumberOfBed}</span>
+                                                </div>
+                                                <div className="d-flex align-items-center">
+                                                    <FaMoneyBillWave className="me-2 text-success" size={18} />
+                                                    <span><strong>Price:</strong> {room.RoomPrice ?
+                                                        (room.RoomPrice * currencyRates[currency]).toFixed(2) + " " + currency : "N/A"}</span>
+                                                </div>
+                                            </div>
+                                            <p><strong>Description:</strong><br/>{room.description}</p>
+                                        </Card.Body>
+                                        <Card.Footer className="bg-white border-0 pb-3">
+                                            <Button
+                                                variant={room.NumberOfBed === 0 ? "secondary" : "primary"}
+                                                disabled={room.NumberOfBed === 0}
+                                                onClick={() => handleApply(room)}
+                                                className="w-100"
+                                                size="lg"
+                                            >
+                                                {room.NumberOfBed === 0 ? "Unavailable" : "Apply Now"}
+                                            </Button>
+                                        </Card.Footer>
+                                    </Card>
+                                </Col>
+                            ))}
                         </Row>
                     )}
                 </Container>
@@ -553,4 +546,4 @@ const Rooms = () => {
     );
 };
  
-export default Rooms;
+export default LandLoardRooms;
