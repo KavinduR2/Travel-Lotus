@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { db } from "../firebase";
-import { collection, addDoc, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, deleteDoc, getDoc, query, where } from "firebase/firestore";
 import { Container, Row, Col, Form, Button, Card, Table, Modal, Offcanvas, Badge } from "react-bootstrap";
 import { FaHome, FaMoneyBillWave, FaTools, FaSignOutAlt, FaBars, FaUser, FaExclamationTriangle, FaBed, FaFileAlt, FaTrash } from 'react-icons/fa';
 
@@ -12,6 +12,7 @@ const AddRooms = () => {
         NumberOfBed: "",
         RoomPrice: "",
         description: "",
+        landlord: (JSON.parse(sessionStorage.getItem('user')).email).split('@')[0],
     });
     const [rooms, setRooms] = useState([]);
     const [showSidebar, setShowSidebar] = useState(false);
@@ -20,28 +21,43 @@ const AddRooms = () => {
 
     // Fetch rooms from Firestore on component mount
     useEffect(() => {
-        const fetchRooms = async () => {
+
+        const fetchRoomsByLandlord = async (landlordId) => {
             try {
-                const querySnapshot = await getDocs(collection(db, "Rooms"));
-                const fetchedRooms = [];
+                const roomsQuery = query(collection(db, "Rooms"), where("landlord", "==", landlordId));
+                const querySnapshot = await getDocs(roomsQuery);
+                
+                const roomData = [];
                 querySnapshot.forEach((doc) => {
-                    fetchedRooms.push({ id: doc.id, ...doc.data() });
+                    roomData.push({ id: doc.id, ...doc.data() });
                 });
-                setRooms(fetchedRooms);
+        
+                console.log(`Rooms for landlord ${landlordId}:`, roomData);
+                setRooms(roomData);
                 setLoading(false);
             } catch (error) {
-                console.error("Error fetching rooms: ", error);
+                console.error("Error fetching landlord-wise rooms: ", error);
                 setLoading(false);
             }
         };
+        
+     
+        fetchRoomsByLandlord((JSON.parse(sessionStorage.getItem('user')).email).split('@')[0]);
 
-        fetchRooms();
+        // fetchRooms();
     }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setRoomData({ ...roomData, [name]: value });
     };
+
+    useEffect(() => {
+        // const user = JSON.parse(sessionStorage.getItem('user'));
+        console.log((JSON.parse(sessionStorage.getItem('user')).email).split('@')[0]);
+     
+    },[] )
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -50,20 +66,48 @@ const AddRooms = () => {
             const docRef = await addDoc(collection(db, "Rooms"), roomData);
             console.log("Document written with ID: ", docRef.id);
             alert("Room details added successfully!");
-            setRoomData({ RoomNo: "", Floor: "", NumberOfBed: "", RoomPrice: "", description: "" });
+            setRoomData({ RoomNo: "", Floor: "", NumberOfBed: "", RoomPrice: "", description: "", landlord: JSON.parse(sessionStorage.getItem('user')).email });
 
             // Refresh the rooms list
-            const querySnapshot = await getDocs(collection(db, "Rooms"));
-            const fetchedRooms = [];
-            querySnapshot.forEach((doc) => {
-                fetchedRooms.push({ id: doc.id, ...doc.data() });
-            });
-            setRooms(fetchedRooms);
+            // const querySnapshot = await getDocs(collection(db, "Rooms"));
+            // const fetchedRooms = [];
+            // querySnapshot.forEach((doc) => {
+            //     fetchedRooms.push({ id: doc.id, ...doc.data() });
+            // });
+
+
+            fetchRoomsByLandlord((JSON.parse(sessionStorage.getItem('user')).email).split('@')[0]);
+            // setRooms(fetchedRooms);
         } catch (error) {
             console.error("Error adding document: ", error);
             alert("Failed to add Room details. Please try again.");
         }
     };
+
+
+    
+
+    const fetchRoomsByLandlord = async (landlordId) => {
+        try {
+            const roomsQuery = query(collection(db, "Rooms"), where("landlord", "==", landlordId));
+            const querySnapshot = await getDocs(roomsQuery);
+            
+            const roomData = [];
+            querySnapshot.forEach((doc) => {
+                roomData.push({ id: doc.id, ...doc.data() });
+            });
+    
+            console.log(`Rooms for landlord ${landlordId}:`, roomData);
+            setRooms(roomData);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching landlord-wise rooms: ", error);
+            setLoading(false);
+        }
+    };
+    
+ 
+    fetchRoomsByLandlord((JSON.parse(sessionStorage.getItem('user')).email).split('@')[0]);
 
     const handleDelete = async (roomId) => {
         try {
@@ -76,7 +120,8 @@ const AddRooms = () => {
             querySnapshot.forEach((doc) => {
                 fetchedRooms.push({ id: doc.id, ...doc.data() });
             });
-            setRooms(fetchedRooms);
+            // setRooms(fetchedRooms);
+            fetchRoomsByLandlord((JSON.parse(sessionStorage.getItem('user')).email).split('@')[0]);
         } catch (error) {
             console.error("Error deleting room: ", error);
             alert("Failed to delete room. Please try again.");
