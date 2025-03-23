@@ -13,7 +13,7 @@ const currencyRates = {
     EUR: 0.92,
     GBP: 0.78,
     INR: 82.5,
-    KES: 150, // Example conversion rate
+    KES: 150, 
 };
 
 const Rooms = () => {
@@ -27,6 +27,7 @@ const Rooms = () => {
     const [newMessage, setNewMessage] = useState('');
     const [chatLoading, setChatLoading] = useState(false);
     const [show, setShow] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const handleClose = () => setShow(false);
     const handleShow = () => {
@@ -89,27 +90,68 @@ const Rooms = () => {
         }
     };    
 
+
+
     // Get user from session storage
     const user = JSON.parse(sessionStorage.getItem('user'));
 
+    const [landLoards,setLandLoards] = useState([]) 
+
     // Fetch rooms data from Firestore
     useEffect(() => {
-        const fetchRooms = async () => {
+
+
+        const fetchRoomsByLandlord = async (landlordId) => {
             try {
-                const querySnapshot = await getDocs(collection(db, "Rooms"));
+                const roomsQuery = query(collection(db, "Rooms"));
+                const querySnapshot = await getDocs(roomsQuery);
+                
                 const roomData = [];
                 querySnapshot.forEach((doc) => {
                     roomData.push({ id: doc.id, ...doc.data() });
                 });
+        
+                console.log(`Rooms for landlord ${landlordId}:`, roomData);
                 setRooms(roomData);
                 setLoading(false);
+            } catch (error) {
+                console.error("Error fetching landlord-wise rooms: ", error);
+                setLoading(false);
+            }
+        };
+        
+        fetchRoomsByLandlord();
+
+
+        const fetchRooms = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "Rooms"));
+                const roomData = [];
+                const landlordSet = new Set(); // To store unique landlords
+        
+                querySnapshot.forEach((doc) => {
+                    const room = { id: doc.id, ...doc.data() };
+                    roomData.push(room);
+                    if (room.landlord) {
+                        landlordSet.add(room.landlord); // Add landlord to Set
+                    }
+                });
+        
+                console.log("Rooms data:", roomData);
+                console.log("Unique landlords:", Array.from(landlordSet));
+        
+                // setRooms(roomData);
+                setLandLoards(Array.from(landlordSet)); // Store landlords in state
+                // setLoading(false);
+                // console.log("Landlords:", landlordSet);
             } catch (error) {
                 console.error("Error fetching rooms: ", error);
                 setLoading(false);
             }
         };
 
-        fetchRooms();
+        fetchRooms()
+
     }, []);
 
     // Handle Apply button click
@@ -120,6 +162,17 @@ const Rooms = () => {
     // Handle currency change
     const handleCurrencyChange = (event) => {
         setCurrency(event.target.value);
+    };
+
+
+    const handleLandlordClick = (landlord) => {
+
+        navigate("/landLoardwiseRooms", { state: { landLoard: landlord } });
+
+        // console.log("Landlord clicked:", landlord); 
+        // const filteredRooms = rooms.filter(room => room.landlord === landlord);
+        // console.log(`Rooms for ${landlord}:`, filteredRooms);
+        // setRooms(filteredRooms); 
     };
  
     return (
@@ -282,11 +335,19 @@ const Rooms = () => {
                             borderRadius: '10px',
                             display: 'inline-block'
                         }}>
-                            Available Rooms
+                            Landlord Wise Rooms
                         </h1>
                     </div>
-                    
-                    <Row className="mb-4 justify-content-center">
+
+                    <input
+                        type="text"
+                        placeholder="Search landlords..."
+                        className="form-control mb-3"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                                        
+                    {/* <Row className="mb-4 justify-content-center">
                         <Col md={4} lg={3}>
                             <Card className="shadow border-0">
                                 <Card.Body>
@@ -304,74 +365,66 @@ const Rooms = () => {
                                 </Card.Body>
                             </Card>
                         </Col>
-                    </Row>
+                    </Row> */}
 
                     {loading ? (
                         <div className="text-center">
                             <Spinner animation="border" variant="light" size="lg" />
-                            <p className="mt-3 text-white">Loading available rooms...</p>
+                            <p className="mt-3 text-white">Loading available Landloards...</p>
                         </div>
                     ) : rooms.length === 0 ? (
                         <div className="text-center">
                             <Card className="shadow-lg border-0 p-4">
                                 <Card.Body>
-                                    <p className="mb-0">No rooms available at the moment.</p>
+                                    <p className="mb-0">No Landloars available at the moment.</p>
                                 </Card.Body>
                             </Card>
                         </div>
                     ) : (
                         <Row>
-                            {rooms.map((room) => (
-                                <Col key={room.id} md={6} lg={4} className="mb-4">
-                                    <Card className="shadow-lg border-0 h-100 transform-hover" style={{
-                                        transform: 'translateY(0)',
-                                        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                                        cursor: 'pointer',
-                                        overflow: 'hidden',
-                                    }}
-                                    onMouseOver={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(-5px)';
-                                        e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
-                                    }}
-                                    onMouseOut={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                        e.currentTarget.style.boxShadow = '';
-                                    }}>
-                                        <Card.Header className="bg-primary text-white py-3">
-                                            <h4 className="mb-0">Room {room.RoomNo}</h4>
-                                        </Card.Header>
-                                        <Card.Body>
-                                            <div className="mb-3 p-2 bg-light rounded">
-                                                <div className="d-flex align-items-center mb-2">
-                                                    <FaHome className="me-2 text-primary" size={18} />
-                                                    <h5 className="mb-0">Floor: {room.Floor}</h5>
-                                                </div>
-                                                <div className="d-flex align-items-center mb-2">
-                                                    <FaBed className="me-2 text-primary" size={18} />
-                                                    <span><strong>Beds:</strong> {room.NumberOfBed}</span>
-                                                </div>
-                                                <div className="d-flex align-items-center">
-                                                    <FaMoneyBillWave className="me-2 text-success" size={18} />
-                                                    <span><strong>Price:</strong> {room.RoomPrice ?
-                                                        (room.RoomPrice * currencyRates[currency]).toFixed(2) + " " + currency : "N/A"}</span>
-                                                </div>
-                                            </div>
-                                            <p><strong>Description:</strong><br/>{room.description}</p>
-                                        </Card.Body>
-                                        <Card.Footer className="bg-white border-0 pb-3">
-                                            <Button
-                                                variant={room.NumberOfBed === 0 ? "secondary" : "primary"}
-                                                disabled={room.NumberOfBed === 0}
-                                                onClick={() => handleApply(room)}
-                                                className="w-100"
-                                                size="lg"
-                                            >
-                                                {room.NumberOfBed === 0 ? "Unavailable" : "Apply Now"}
-                                            </Button>
-                                        </Card.Footer>
-                                    </Card>
-                                </Col>
-                            ))}
+
+
+{landLoards
+    .filter((landlord) => landlord.toLowerCase().includes(searchTerm.toLowerCase())) // Filter landlords
+    .map((landlord, index) => (
+        <Col key={index} md={6} lg={4} className="mb-4">
+            <Card 
+                className="shadow-lg border-0 h-100 transform-hover" 
+                style={{
+                    transform: 'translateY(0)',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    cursor: 'pointer',
+                    overflow: 'hidden',
+                }}
+                onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                    e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
+                }}
+                onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '';
+                }}
+            >
+                <Card.Header className="bg-primary text-white py-3">
+                    <h4 className="mb-0">Landlord: {landlord.split('@')[0]}</h4>
+                </Card.Header>
+                <Card.Body>
+                    <p><strong>Click to view rooms</strong></p>
+                </Card.Body>
+                <Card.Footer className="bg-white border-0 pb-3">
+                    <Button 
+                        variant="primary" 
+                        className="w-100" 
+                        size="lg"
+                        onClick={() => handleLandlordClick(landlord.split('@')[0])}
+                    >
+                        View Rooms
+                    </Button>
+                </Card.Footer>
+            </Card>
+        </Col>
+    ))}
+
                         </Row>
                     )}
                 </Container>
