@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { auth, db } from '../firebase';
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { getDoc, doc, setDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Alert, InputGroup } from 'react-bootstrap';
 import { FcGoogle } from 'react-icons/fc';
 
-const Login = () => {
+const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -16,35 +17,51 @@ const Login = () => {
     const [googleLoading, setGoogleLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
         setLoading(true);
 
+        if (password !== confirmPassword) {
+            setError('Passwords do not match!');
+            setLoading(false);
+            return;
+        }
+
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            const userDoc = await getDoc(doc(db, 'Users', user.uid));
-            
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
-                setSuccess(`Login successful as ${userData.role || 'User'}! Redirecting...`);
-            } else {
-                setSuccess('Login successful! Redirecting...');
+            try {
+                await setDoc(doc(db, 'Users', user.uid), {
+                    email: user.email,
+                    role: 'Guest',
+                    createdAt: new Date(),
+                });
+                
+                setSuccess('Registration successful as Guest! Redirecting to login...');
+                setLoading(false); // Stop loading here
+                setTimeout(() => navigate('/login'), 1500);
+            } catch (firestoreError) {
+                console.error("Error saving user data:", firestoreError);
+                setError("Account created but profile setup failed. Please contact support.");
+                setLoading(false);
             }
-            
-            setLoading(false); // Stop loading here
-            setTimeout(() => navigate('/home'), 1500);
-        } catch (error) {
-            console.error('Error logging in:', error);
-            setError('Invalid email or password.');
+        } catch (err) {
+            console.error('Error during registration:', err);
+            if (err.code === 'auth/email-already-in-use') {
+                setError('This email is already registered. Please login instead.');
+            } else if (err.code === 'auth/weak-password') {
+                setError('Password is too weak. Please use a stronger password.');
+            } else {
+                setError(err.message);
+            }
             setLoading(false);
         }
     };
 
-    const handleGoogleLogin = async () => {
+    const handleGoogleSignUp = async () => {
         const provider = new GoogleAuthProvider();
         setGoogleLoading(true);
         
@@ -52,25 +69,24 @@ const Login = () => {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
 
-            const userDoc = await getDoc(doc(db, 'Users', user.uid));
-            
-            if (!userDoc.exists()) {
+            try {
                 await setDoc(doc(db, 'Users', user.uid), {
                     email: user.email,
                     role: 'Guest',
                     createdAt: new Date(),
                 });
-                setSuccess('First-time Google login successful! Registered as Guest. Redirecting...');
-            } else {
-                const userData = userDoc.data();
-                setSuccess(`Google login successful as ${userData.role || 'User'}! Redirecting...`);
+                
+                setSuccess('Google registration successful as Guest! Redirecting to login...');
+                setGoogleLoading(false); // Stop loading here
+                setTimeout(() => navigate('/login'), 1500);
+            } catch (firestoreError) {
+                console.error("Error saving user data:", firestoreError);
+                setError("Account created but profile setup failed. Please contact support.");
+                setGoogleLoading(false);
             }
-            
-            setGoogleLoading(false); // Stop loading here
-            setTimeout(() => navigate('/home'), 1500);
-        } catch (error) {
-            console.error('Error logging in with Google:', error);
-            setError('Failed to login with Google.');
+        } catch (err) {
+            console.error('Error during Google registration:', err);
+            setError('Failed to register with Google.');
             setGoogleLoading(false);
         }
     };
@@ -78,7 +94,7 @@ const Login = () => {
     return (
         <div
             style={{
-                backgroundImage: `url('/Images/Login_Image.webp')`,
+                backgroundImage: `url('/Images/Login_Image.webp')`, // Updated to match login page
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 minHeight: '100vh',
@@ -144,11 +160,11 @@ const Login = () => {
                         }}>
                             <Card.Body className="p-5">
                                 <Card.Title className="text-center mb-4">
-                                    <h2 className="fw-bold" style={{ color: '#0069d9' }}>Welcome Back</h2>
-                                    <p className="text-muted mt-2">Login to your account</p>
+                                    <h2 className="fw-bold" style={{ color: '#0069d9' }}>Create an Account</h2>
+                                    <p className="text-muted mt-2">Join our community of travelers</p>
                                 </Card.Title>
                                 
-                                <Form onSubmit={handleLogin}>
+                                <Form onSubmit={handleRegister}>
                                     <Form.Group className="mb-4">
                                         <Form.Label className="fw-semibold">Email</Form.Label>
                                         <Form.Control
@@ -184,6 +200,28 @@ const Login = () => {
                                         </InputGroup>
                                     </Form.Group>
 
+                                    <Form.Group className="mb-4">
+                                        <Form.Label className="fw-semibold">Confirm Password</Form.Label>
+                                        <InputGroup>
+                                            <Form.Control
+                                                type={showPassword ? 'text' : 'password'}
+                                                placeholder="Confirm your password"
+                                                value={confirmPassword}
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                                required
+                                                className="p-3 rounded-3 rounded-end-0"
+                                                style={{ borderLeft: '4px solid #0069d9' }}
+                                            />
+                                            <Button
+                                                variant="light"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="rounded-start-0 rounded-end-3"
+                                            >
+                                                {showPassword ? '🙈' : '👀'}
+                                            </Button>
+                                        </InputGroup>
+                                    </Form.Group>
+
                                     <Button
                                         variant="primary"
                                         type="submit"
@@ -198,9 +236,9 @@ const Login = () => {
                                         {loading ? (
                                             <>
                                                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                Logging in...
+                                                Registering...
                                             </>
-                                        ) : 'Login'}
+                                        ) : 'Register'}
                                     </Button>
 
                                     <div className="text-center my-3">
@@ -210,7 +248,7 @@ const Login = () => {
                                     <Button
                                         variant="light"
                                         className="w-100 p-3 rounded-3 border shadow-sm mb-4 d-flex align-items-center justify-content-center"
-                                        onClick={handleGoogleLogin}
+                                        onClick={handleGoogleSignUp}
                                         disabled={loading || googleLoading}
                                         style={{ transition: 'all 0.3s ease' }}
                                     >
@@ -218,18 +256,35 @@ const Login = () => {
                                         {googleLoading ? (
                                             <>
                                                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                Logging in...
+                                                Registering...
                                             </>
-                                        ) : 'Login with Google'}
+                                        ) : 'Register with Google'}
                                     </Button>
 
                                     {error && <Alert variant="danger" className="mt-3 mb-3">{error}</Alert>}
                                     {success && <Alert variant="success" className="mt-3 mb-3">{success}</Alert>}
 
                                     <div className="text-center mt-4">
-                                        <span className="text-dark">Don't have an account? </span>
+                                        <span className="text-dark">Already have an account? </span>
                                         <Link
-                                            to="/register"
+                                            to="/login"
+                                            style={{ 
+                                                color: '#0069d9', 
+                                                fontWeight: '600', 
+                                                textDecoration: 'none',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                            onMouseEnter={(e) => e.target.style.color = '#004c99'}
+                                            onMouseLeave={(e) => e.target.style.color = '#0069d9'}
+                                        >
+                                            Log in here
+                                        </Link>
+                                    </div>
+
+                                    <div className="text-center mt-3 pb-2">
+                                        <span className="text-dark">Want to register as a landlord? </span>
+                                        <Link
+                                            to="/admin-register"
                                             style={{ 
                                                 color: '#0069d9', 
                                                 fontWeight: '600', 
@@ -252,4 +307,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;
