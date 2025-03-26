@@ -44,7 +44,7 @@ const LandingPage = () => {
         <div className="container-fluid">
             <Link className="navbar-brand fs-2 fw-bold d-flex align-items-center" to="/">
             <img 
-                src={`${process.env.PUBLIC_URL}/images/logo.png`} 
+                src="images/logo.png"
                 alt="Travel Lotus Logo" 
                 height="80" 
                 className="me-2" 
