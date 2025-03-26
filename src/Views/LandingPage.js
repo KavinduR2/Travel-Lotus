@@ -5,7 +5,6 @@ import { FaBed, FaBuilding, FaHandshake, FaRobot, FaUsers } from 'react-icons/fa
 import LanguageSelector from './components/LanguageSelector';
 import TransportationLinks from './components/TransportationLinks';
 import ChatAssistant from './components/ChatAssistant';
-import logo from './images/logo.png';
 
 const LandingPage = () => {
   const [language, setLanguage] = useState('english');
